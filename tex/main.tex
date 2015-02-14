@@ -1,0 +1,161 @@
+% Paper for Learning-Based Controls (ME 537)
+
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+
+\IEEEoverridecommandlockouts                              % This command is only needed if 
+                                                          % you want to use the \thanks command
+
+\overrideIEEEmargins                                      % Needed to meet printer requirements.
+
+\usepackage{prg-stuff}
+
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+%\usepackage{ijcai09}  % style
+\usepackage{times}    % font
+\usepackage{graphicx} % inserting images
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{mathtools} % For math
+\usepackage{hyperref}
+%\usepackage{enumitem}
+\renewcommand{\deg}{\ensuremath{^{\circ}}\xspace}  % why doesn't this work???
+
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
+
+\graphicspath{ {./figures/} } % Point to the figures directory
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\LARGE \bf 
+GENERIC TITLE
+}
+
+\author{Name 1$^{1}$, Name 2$^{2}$, Name 3$^{3}$% <-this % stops a space
+%\thanks{*This work was supported by... }% <-this % stops a space
+\thanks{*All authors are with the School of Mechanical, Industrial, and Manufacturing Engineering,
+         Oregon State University,
+         Corvallis, OR, USA. }% <-this % stops a space
+\thanks{$^{1}$Corresponding author: {\tt\small id@onid.oregonstate.edu}}%
+\thanks{$^{2}$Corresponding author: {\tt\small id@onid.oregonstate.edu}}%
+\thanks{$^{3}$Corresponding author: {\tt\small id@onid.oregonstate.edu}}%
+}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+\begin{abstract}
+ABSTRACT TEXT
+\end{abstract}
+
+
+\section{Introduction}
+
+INTRODUCTION TEXT\cite{placeholder}
+
+\section{Related Work}
+
+\subsection{Computer Vision Algorithm}
+
+SUBSECTION TEXT
+
+\subsection{Adaptive View Planning}
+
+SUBSECTION TEXT
+
+\section{Methods}
+
+\subsection{Computer Vision Algorithm}
+
+SUBSECTION TEXT
+
+\subsection{View Enumerations}
+
+SUBSECTION TEXT
+
+\subsection{Planning Algorithm}
+
+SUBSECTION TEXT
+
+\section{Results}
+
+RESULTS TEXT
+
+\subsection{SUBSECTION ONE}
+
+SUBSECTION TEXT
+
+\subsection{SUBSECTION TWO}
+
+SUBSECTION TEXT
+
+\section{Discussion}
+
+\subsection{SUBSECTION ONE}
+
+SUBSECTION TEXT
+
+\section{Conclusion}
+
+CONCLUSION TEXT
+
+\bibliographystyle{IEEEtran}
+\bibliography{main.bib}
+
+
+\end{document}
+
+% FIGURE HINTS 
+%
+%\begin{figure*}
+%    \centering
+%    \begin{subfigure}[b]{0.3\textwidth}
+%        \centering
+%        \includegraphics[width=.7\textwidth]{Reflex.jpg}
+%        \caption{Reflex agent path}
+%        \label{fig:reflex path}
+%    \end{subfigure}
+%    \hfill
+%    \begin{subfigure}[b]{0.3\textwidth}
+%        \centering
+%        \includegraphics[width=.7\textwidth]{Random.jpg}
+%        \caption{Random agent path}
+%        \label{fig:random path}
+%    \end{subfigure}
+%    \hfill
+%    \begin{subfigure}[b]{0.3\textwidth}
+%        \centering
+%        \includegraphics[width=.7\textwidth]{Memory.jpg}
+%        \caption{Memory agent path}
+%        \label{fig:memory path}
+%    \end{subfigure}
+%    \caption{Agent paths}
+%    \label{fig:agent paths}
+%\end{figure*}
+
+% ALGORITHM HINTS
+%
+%\begin{algorithm}[h]
+%\caption{Reflex agent}\label{reflex algorithm}
+%\begin{algorithmic}[1]
+%\If {$isDirty = true$}
+%\State \Return \textit{actionSuck}
+%\ElsIf {$facingWall \neq true$}
+%\State \Return \textit{actionForward}
+%\ElsIf {$facingWall = true$ AND $isHome = true$}
+%\State \Return \textit{actionOff}
+%\Else
+%\State \Return \textit{actionTurnRight}
+%\EndIf
+%\end{algorithmic}
+%\end{algorithm}

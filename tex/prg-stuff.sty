@@ -1,0 +1,35 @@
+%Filename: prg-stuff.sty
+
+\ProvidesPackage{prl}[2013/09/04 v1.0]
+\typeout{Personal Robotics Group latex stuff}
+
+% Commonly-used useful packages
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{wrapfig}
+%\usepackage{subfigure}
+\usepackage{url}
+
+% Symbols
+\newcommand\degree{$^\circ$}
+
+% Mathematics
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\I}{\ensuremath{\mathbb{I}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+
+% References
+\newcommand{\secref}[1]{section~\ref{#1}}
+\newcommand{\Secref}[1]{Section~\ref{#1}}
+\newcommand{\figref}[1]{figure~\ref{#1}}
+\newcommand{\Figref}[1]{Figure~\ref{#1}}
+\newcommand{\tabref}[1]{table~\ref{#1}}
+\newcommand{\Tabref}[1]{Table~\ref{#1}}
+
+% Code
+\newcommand{\code}[1]{\texttt{#1}}
+
+% Author stuff
+\newcommand{\osuaffiliation}{The authors are with the School of Mechanical, Industrial, and Manufacturing Engineering, Oregon State University, Corvallis, OR 97331, United States.}

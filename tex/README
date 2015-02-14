@@ -1,0 +1,18 @@
+How to use LaTeX (in this directory).
+
+the "./Makefile" makes it so you can do this:
+> make
+builds the LaTeX document into, among other things, a PDF file. 
+> make clean
+deletes all the generated documents, leaving only the .tex and .bib files
+
+The .tex file holds the document, including formatting commands.
+
+The .bib file is one way of holding the references we want to
+cite. Citations are then made in the .tex document.
+
+Git etiquette: don't commit any generated files, including PDFs,
+however tempted you may be. Bill, at least, will get mad at you. This
+is because, if you make some changes to the .tex or .bib files but
+don't regenerate the PDF, people could pull down the PDF and use that
+without questioning anything, thereby getting an outdated file.
