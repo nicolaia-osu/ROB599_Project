@@ -81,7 +81,11 @@ SUBSECTION TEXT
 
 \subsection{Data Generation}
 
-SUBSECTION TEXT
+In order to accurately detect surface defects in knives, a classifier must be trained. For this classifier to be robust, it must be trained on a large, and comprehensive, set of data.
+
+In order to generate this data, the knives were first filmed under a variety of lighting conditions from multiple angles. From here, still images were extracted to be used for training. The images selected represent many different angles and several lighting conditions. In the image set, there are both positive and negative examples of the defect.
+
+Next, a sliding window technique was used to generate additional training data from the image set. This process is shown in \textit{Figure \ref{fig:data generation}}. First, a user specifies the location of all defect corners. From this, the sliding window is able to automatically determine if it contains a defect and save the windowed image appropriately.
 
 \begin{figure*}
     \centering
@@ -116,7 +120,11 @@ SUBSECTION TEXT
 
 \subsection{Computer Vision Algorithm}
 
-SUBSECTION TEXT
+The computer vision algorithm employed in this paper was first proposed by ***ADD REFERENCE*** for use in defect detection in railroad tracks. The algorithm uses Gabor wavelet filters to extract features from an input image. The classification is performed by an SVM ***MAKE SURE DEFINED SOMEWHERE*** classifier. A flowchart of the algorithm can be seen in \textit{Figure \ref{fig:vision algorithm diagram}}.
+
+First, the input image is fed through a filter bank. This filter bank consists of Gabor wavelet filters. Four wavelet orientations are used: \textit{0\degree}, \textit{45\degree}, \textit{90\degree}, and \textit{135\degree}. Each orientation is replicated for three different sizes. This yields a total of twelve filters. Next, the magnitude operator is applied to the filtered images. An example of this process can be seen in \textit{Figure \ref{fig:gabor filter bank}}.
+
+The next step is feature extraction for input into the SVM. The features used are the mean and variance of each filtered image. This allows for an image of high resolution to be collapsed down into a manageable feature set. The final resulting feature vector consists of all means and variances. For our algorithm, the feature vector is of length 24.
 
 \begin{figure*}
     \centering
