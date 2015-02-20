@@ -59,7 +59,7 @@ Active Planning for Defect Detection in the Knife Domain
 \pagestyle{empty}
 
 \begin{abstract}
-ABSTRACT TEXT
+\textit{Abstract text will go here}
 \end{abstract}
 
 
@@ -187,33 +187,25 @@ The next step is feature extraction for input into the SVM. The features used ar
 
 We propose to incorporate an informative path planning approach to maximize detection of potential knife defects. Informally, such a procedure will require training against a sufficiently large image database so that knife regions can be identified as showing potential for having a surface defect.
 
-Such a path planning problem seems trivial until placing strict timing constraints on the image capturing procedure or as we limit the number preset camera locations. Given a single fixed camera location, we assume a robot arm is available for grasping a single knife and rotating it to the appropriate angle for the camera to capture an image.
+Such a path planning problem seems trivial until placing strict timing constraints on the image capturing procedure or as we limit the number preset camera locations. Given a single fixed camera location, we assume a robot arm is available for grasping a single knife and rotating it to the appropriate angle for the camera to capture a specific view. Additionally, changes to the lighting configuration, or lighting type (e.g. near field, dark field), could be used to specify a different view configuration.
 
-Initially, we assign equal information to all locations along the knife surface. Naturally this leads to the first image capturing the one full side of the knife edge. Subsequent images will be based on the change information that takes place during image analysis. Potential defect locations identified by the analysis will lead to an updated non-uniform information layout along the knife surface. High probability of defect detection on one location of the knife might lead to the next image being captured zoomed in near that knife region. If the image analysis does not lead to significant potential defect locations, the original information layout would cause the path planning algorithm to capture a full view of the information on the opposite knife edge.
+Initially, we assign equal information to all locations along the knife surface. Naturally this leads to the first image capturing the one full side of the knife edge. Subsequent images will be based on the information yielded during image analysis. Potential defect locations identified by the analysis will lead to an updated non-uniform information layout along the knife surface. High probability of defect detection on one location of the knife might lead to the next image being captured zoomed in near that knife region. If the image analysis does not lead to significant potential defect locations, the original information layout would likely cause the path planning algorithm to capture a full view of the information on the opposite knife edge.
 
-Additional considerations like reflection angle against light resources could have a significant effect on how well knife defects are identified in images. Being able to quantify this gain in information will be critical in incorporating this into out path planning procedure. The authors are unsure at this point how best to quantify this. However, given the knife surfaces particular to current knife unit being examined, a single image capture could be replaced with multiple image captures at different reflection angles to maximize the possibility of defect discovery.
+The order in which views will be selected by the planner will depend upon the predicted information gain. This will be calculated by the standard method of entropy reduction. That is, the selected view will be the one in which the resulting defect probability distribution will be most certain. One of the challenges in this approach lies in predicting the results of viewing a specific view. This, in part, can be achieved through using the expected output of the vision system. This is one reason why it is important for the vision system to be robust.
+
+Additional considerations such as reflection angle against light resources could have a significant effect on how well knife defects are identified in images will need to be considered. In most cases, the physical manifold changes between knife types. Given the knife surfaces particular to the current knife unit being examined, a single image capture could be replaced with multiple image captures at different reflection angles to maximize the possibility of defect discovery.
 
 \section{Results}
 
-RESULTS TEXT
-
-\subsection{SUBSECTION ONE}
-
-SUBSECTION TEXT
-
-\subsection{SUBSECTION TWO}
-
-SUBSECTION TEXT
+\textit{Results text will go here}
 
 \section{Discussion}
 
-\subsection{SUBSECTION ONE}
-
-SUBSECTION TEXT
+\textit{Discussion text will go here}
 
 \section{Conclusion}
 
-CONCLUSION TEXT
+\textit{Conclusion text will go here}
 
 \bibliographystyle{IEEEtran}
 \bibliography{main}
