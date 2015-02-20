@@ -72,7 +72,7 @@ INTRODUCTION TEXT\cite{placeholder}
 \subsection{Defect Detection}
 Defect detection is necessary within the manufacturing world to ensure both quality and safety. Despite the advanced automated techniques used to manufacture complex products, many products are still manually inspected. The process of manually inspecting parts is tedious and error prone. Furthermore, it can be highly mentally and ergonomically redudant, decreasing employee satisfaction and leading to increased physical strain. Due to resource constraints within companies, it can sap skilled workers away from productive tasks, leading to economic losses. In short, defect detection while important and necessary, is draining.
 
-Attempts and sucesses have been made in automating defect detection, but each defect detection process can be highly dependent upon the good manufactured. We have decided to focus on defects found on small knives. This process currently involves skilled workers taking two hour shifts from their normal job to vizually inspect a small batch of knives for a wide variety of defects. On average, a worker spends 5 seconds inspecting each knife with a 80 percent accuracy rate in detecting defects.
+Attempts and sucesses have been made in automating defect detection, but each defect detection process can be highly dependent upon the good manufactured. We have decided to focus on defects found during knife manufacturing. This process currently involves skilled workers taking two hour shifts from their normal job to vizually inspect a batch of knives for a wide variety of defects. On average, a worker spends 5 seconds inspecting each knife with a 80 percent accuracy rate in detecting defects.
 
 For the focus of this paper, we will focus in on only one type of defect - **defect type**. **Describe defect
 
@@ -96,7 +96,11 @@ A wavelet filter, Gabor filter, and Gabor wavlet filter were successfully used t
 
 \subsection{Adaptive View Planning}
 
-SUBSECTION TEXT
+Informative Path Planning (IPP) is defined as autonomously deciding what path to take while collecting measurements, based on a probabilistic model of the quantity being studied \cite{BNBIPP}. IPP has been effectively used to monitor environmental conditions with autonomous underwater vehicles\cite{BNBIPP}\cite{underwaterIPP}. IPP algorithms, when used in domains that exhibit the property of submodularity (e.g. sensor placement), yield simple greedy solutions that carry important the theoretical guarantee of a close approximation of the optimal solution (within ~63 percent of optimal). 
+
+Adaptive View Planning (AVP) is a specialized case of IPP. AVP seeks to optimize the classification success rate in the shortest amount of time or lowest path cost by having an autonomous agent decide which view angles give the most pertinent information necessary to correctly classify an specific object. The planning is adaptive in the sense that what is seen from one view angle impacts which view angle the agent decide to move to and look at next. 
+
+This problem has been examined in the domain of examining ship hulls for mines \cite{hollinger2011active}. The authors reduced the number of needed views by 80 percent compared to non-adaptive methods.
 
 \section{Methods}
 
@@ -207,7 +211,7 @@ SUBSECTION TEXT
 CONCLUSION TEXT
 
 \bibliographystyle{IEEEtran}
-\bibliography{main.bib}
+\bibliography{main}
 
 
 \end{document}
