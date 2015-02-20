@@ -70,9 +70,9 @@ INTRODUCTION TEXT\cite{placeholder}
 \section{Related Work}
 
 \subsection{Defect Detection}
-Defect detection is necessary within the manufacturing world to ensure both quality and safety. Despite the advanced automated techniques used to manufacture complex products, many products are still manually inspected. The process of manually inspecting parts is tedious and error prone. Furthermore, it can be highly mentally and ergonomically redudant, decreasing employee satisfaction and leading to increased physical strain. Due to resource constraints within companies, it can sap skilled workers away from productive tasks, leading to economic losses. In short, defect detection while important and necessary, is draining.
+Defect detection is necessary within the manufacturing world to ensure both quality and safety. Despite the advanced automated techniques used to manufacture complex products, many products are still manually inspected. The process of manually inspecting parts is tedious and error prone. Furthermore, it can be highly mentally and ergonomically redundant, decreasing employee satisfaction and leading to increased physical strain. Due to resource constraints within companies, it can sap skilled workers away from productive tasks, leading to economic losses. In short, defect detection while important and necessary, is draining.
 
-Attempts and sucesses have been made in automating defect detection, but each defect detection process can be highly dependent upon the good manufactured. We have decided to focus on defects found during knife manufacturing. This process currently involves skilled workers taking two hour shifts from their normal job to vizually inspect a batch of knives for a wide variety of defects. On average, a worker spends 5 seconds inspecting each knife with a 80 percent accuracy rate in detecting defects.
+Attempts and successes have been made in automating defect detection, but each defect detection process can be highly dependent upon the good manufactured. We have decided to focus on defects found during knife manufacturing. This process currently involves skilled workers taking two hour shifts from their normal job to visually inspect a batch of knives for a wide variety of defects. On average, a worker spends 5 seconds inspecting each knife with a 80 percent accuracy rate in detecting defects.
 
 For the focus of this paper, we will focus in on only one type of defect - **defect type**. **Describe defect
 
@@ -80,7 +80,7 @@ For the focus of this paper, we will focus in on only one type of defect - **def
 
 Computer vision, the automated extraction of meaningful information from images, relies on two key components for success: feature extraction and image classification. 
 
-Feature extraction is a necessary to deal with the extremely large datasets that comprise a single image.  For example, a small 64X64 RGB icon has 4096 individual pixels, each of which can be thought of as a unique feature. When looked at as a more complex feature composed of multiple pixels (i.e. the pixels that make up a nose verus an eye), the number of possible features is exponential. 
+Feature extraction is a necessary to deal with the extremely large datasets that comprise a single image.  For example, a small 64X64 RGB icon has 4096 individual pixels, each of which can be thought of as a unique feature. When looked at as a more complex feature composed of multiple pixels (i.e. the pixels that make up a nose Venus an eye), the number of possible features is exponential. 
 
 Feature extraction allows one to cut down the number of features examined from all possible features to a smaller, transformed subset of features that yields the most pertinent information. Feature extraction is different from feature selection in that feature selection simply grabs some subset of the original features and utilizes those.  Feature extraction takes the original features and transforms them into a smaller set of more useful features.
 
@@ -90,9 +90,9 @@ Image classification is done using common machine learning techniques for classi
 
 Unsupervised learning with image classification requires an expert to label a set of images beforehand. The labeled images are then used to instruct or train the classifier. While more tedious, given a large enough training set, these algorithms can be very efficient and effective.
 
-For example, a real-time vision system for surface defect detection in steel manufacturing was successfully implemented by Jia, et al using standard supervised learning algorithms and a clever feature extraction scheme \cite{steelDefect}. The authors used a rough filter to detect possible edges in the steel and then features are extracted from that according to their length (in pixels), the gray scale constract of seam to adjacent area, the intensity differences between the two sides of the seams, and the mean and varaiance of the seam regions. Using these features, the images were then classified using two standard classification algorithms: K-Nearest Neighbors (KNN) and a Support Vector Machine (SVM). The authors were able to classify the images with greater than 90 perecent accuracy at a rate of 172 images per second, fast enough to detect defects in real-time for a steel rolling machine that could reach speeds of 225 MPH.
+For example, a real-time vision system for surface defect detection in steel manufacturing was successfully implemented by Jia, et al using standard supervised learning algorithms and a clever feature extraction scheme \cite{steelDefect}. The authors used a rough filter to detect possible edges in the steel and then features are extracted from that according to their length (in pixels), the gray scale constract of seam to adjacent area, the intensity differences between the two sides of the seams, and the mean and variance of the seam regions. Using these features, the images were then classified using two standard classification algorithms: K-Nearest Neighbors (KNN) and a Support Vector Machine (SVM). The authors were able to classify the images with greater than 90 percent accuracy at a rate of 172 images per second, fast enough to detect defects in real-time for a steel rolling machine that could reach speeds of 225 MPH.
 
-A wavelet filter, Gabor filter, and Gabor wavlet filter were successfully used to clasify corrugation defects on rail tracks\cite{railDefect}. In particular, the authors found the Gabor filter to be most successful. The image was first convolved with the Gabor filter at 4 different orientations. Each of these images were then evaluated with an energy distrubution function yielding the mean and variance.  The mean and variance from each filter orientation were assembled to create a feature vector of size 8 for the original image.
+A wavelet filter, Gabor filter, and Gabor wavlet filter were successfully used to classify corrugation defects on rail tracks\cite{railDefect}. In particular, the authors found the Gabor filter to be most successful. The image was first convolved with the Gabor filter at 4 different orientations. Each of these images were then evaluated with an energy distribution function yielding the mean and variance.  The mean and variance from each filter orientation were assembled to create a feature vector of size 8 for the original image.
 
 \subsection{Adaptive View Planning}
 
@@ -186,7 +186,41 @@ SUBSECTION TEXT
 
 \subsection{Planning Algorithm}
 
-SUBSECTION TEXT
+We propose to incorporate an informative path planning approach to
+maximize detection of potential knife defects. Informally, such a
+procedure will require training against a sufficiently large image
+database so that knife regions can be identified as showing potential
+for having a surface defect.
+
+Such a path planning problem seems trivial until placing strict timing
+constraints on the image capturing procedure or as we limit the number
+preset camera locations. Given a single fixed camera location, we
+assume a robot arm is available for grasping a single knife and
+rotating it to the appropriate angle for the camera to capture an
+image.
+
+Initially, we assign equal information to all locations along the knife
+surface. Naturally this leads to the first image capturing the one
+full side of the knife edge. Subsequent images will be based on the
+change information that takes place during image analysis. Potential
+defect location identified by the analysis will lead to an updated
+non-uniform information layout along the knife surface. High
+probability of defect detection on one location of the knife might
+lead to the next image being captured zoomed in near that knife
+region. If the image analysis does not lead to significant potential
+defect locations, the original information layout would cause the path
+planning algorithm to capture a full view of the information on the
+opposite knife edge.
+
+Additional considerations like reflection angle against light
+resources could have a significant effect on how well knife defects
+are identified in images. Being able to quantify this gain in
+information will be critical in incorporating this into out path
+planning procedure. The authors are unsure at this point how best to
+quantify this. However, given the knife surfaces particular to current
+knife unit being examined, a single image capture could be replaced
+with multiple image captures at different relection angles to maximize
+the possiblity of defect discovery.
 
 \section{Results}
 
