@@ -65,12 +65,16 @@ ABSTRACT TEXT
 
 \section{Introduction}
 
-INTRODUCTION TEXT
+Defect detection is a must within automated manufacturing. Even though automated process are more consistent that human laborers, defects can occur due to a complex number of internal or external factors.  These defects can range from slight cosmetic blimshes to safety-threatening faults. The ability to quickly and accurately identify defects as soon as possible within the manufacturing process is must to ensure smooth operation, resource efficiency, and quality products.
+
+Despite the advanced automated techniques used to manufacture complex products many products are still manually inspected, costing companies and workers valuable resources.
+
+In this paper, we will show the benefits of applying current computer vision techniques with adaptive view planning algorithms to automatically detect defects in small knives.
 
 \section{Related Work}
 
 \subsection{Defect Detection}
-Defect detection is necessary within the manufacturing world to ensure both quality and safety. Despite the advanced automated techniques used to manufacture complex products, many products are still manually inspected. The process of manually inspecting parts is tedious and error prone. Furthermore, it can be highly mentally and ergonomically redundant, decreasing employee satisfaction and leading to increased physical strain. Due to resource constraints within companies, it can sap skilled workers away from productive tasks, leading to economic losses. In short, defect detection while important and necessary, is draining.
+Defect detection is necessary within the manufacturing world to ensure both quality and safety. The process of manually inspecting parts is tedious and error prone. Furthermore, it can be highly mentally and ergonomically redundant, decreasing employee satisfaction and leading to increased physical strain. Due to resource constraints within companies, it can sap skilled workers away from productive tasks, leading to economic losses. In short, defect detection while important and necessary, is draining.
 
 Attempts and successes have been made in automating defect detection, but each defect detection process can be highly dependent upon the good manufactured \cite{defectGabor}\cite{defectSewer}. We have decided to focus on defects found during knife manufacturing. This process currently involves skilled workers taking two hour shifts from their normal job to visually inspect a batch of knives for a wide variety of defects. On average, a worker spends 5 seconds inspecting each knife with a 80 percent accuracy rate in detecting defects.
 
@@ -91,7 +95,7 @@ Unsupervised learning with image classification requires an expert to label a se
 
 For example, a real-time vision system for surface defect detection in steel manufacturing was successfully implemented by Jia, et al using standard supervised learning algorithms and a clever feature extraction scheme \cite{steelDefect}. The authors used a rough filter to detect possible edges in the steel and then features are extracted from that according to their length (in pixels), the gray scale constract of seam to adjacent area, the intensity differences between the two sides of the seams, and the mean and variance of the seam regions. Using these features, the images were then classified using two standard classification algorithms: K-Nearest Neighbors (KNN) and a Support Vector Machine (SVM). The authors were able to classify the images with greater than 90 percent accuracy at a rate of 172 images per second, fast enough to detect defects in real-time for a steel rolling machine that could reach speeds of 225 MPH.
 
-A wavelet filter, Gabor filter, and Gabor wavlet filter were successfully used to classify corrugation defects on rail tracks\cite{railDefect}. In particular, the authors found the Gabor filter to be most successful. The image was first convolved with the Gabor filter at 4 different orientations. Each of these images were then evaluated with an energy distribution function yielding the mean and variance.  The mean and variance from each filter orientation were assembled to create a feature vector of size 8 for the original image.
+A wavelet filter, Gabor filter, and Gabor wavlet filter were successfully used to classify corrugation defects on rail tracks\cite{railDefect}. In particular, the authors found the Gabor filter to be most successful. The image was first convolved with the Gabor filter at 4 different orientations. Each of these images were then evaluated with an energy distribution function yielding the mean and variance.  The mean and variance from each filter orientation were assembled to create a feature vector of size 8 for the original image. This is the filter we will be using to detect defects in knives.
 
 \subsection{Adaptive View Planning}
 
