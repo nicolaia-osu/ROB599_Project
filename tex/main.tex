@@ -74,7 +74,7 @@ Defect detection is necessary within the manufacturing world to ensure both qual
 
 Attempts and sucesses have been made in automating defect detection, but each defect detection process can be highly dependent upon the good manufactured. We have decided to focus on defects found on small knives. This process currently involves skilled workers taking two hour shifts from their normal job to vizually inspect a small batch of knives for a wide variety of defects. On average, a worker spends 5 seconds inspecting each knife with a 80 percent accuracy rate in detecting defects.
 
-For the focus of this paper, we will focus in on only one type of defect - **defect type**. **Describe defect type***
+For the focus of this paper, we will focus in on only one type of defect - **defect type**. **Describe defect
 
 \subsection{Computer Vision}
 
@@ -86,11 +86,17 @@ Feature extraction allows one to cut down the number of features examined from a
 
 While there are general methods currently in use across machine learning to deal with feature extraction (e.g. PCA) and selection, there are specific methods used in computer vision that take advantage of the image data structure.
 
+Image classification is done using common machine learning techniques for classification. Machine learning comes in two forms: supervised and unsupervised. Unsupervised image classification is done by feeding an algorithm a large data set of images or videos and then allowing the machine to pick out the important features and classify these images. While still in its infancy, deep learning with neural networks have been used successfully. The problem with these algorithms at this stage, is they take a long time to run, and are not yet ready for a real-time vision system. 
+
+Unsupervised learning with image classification requires an expert to label a set of images beforehand. The labeled images are then used to instruct or train the classifier. While more tedious, given a large enough training set, these algorithms can be very efficient and effective.
+
+For example, a real-time vision system for surface defect detection in steel manufacturing was successfully implemented by Jia, et al using standard supervised learning algorithms and a clever feature extraction scheme \cite{steelDefect}. The authors used a rough filter to detect possible edges in the steel and then features are extracted from that according to their length (in pixels), the gray scale constract of seam to adjacent area, the intensity differences between the two sides of the seams, and the mean and varaiance of the seam regions. Using these features, the images were then classified using two standard classification algorithms: K-Nearest Neighbors (KNN) and a Support Vector Machine (SVM). The authors were able to classify the images with greater than 90 perecent accuracy at a rate of 172 images per second, fast enough to detect defects in real-time for a steel rolling machine that could reach speeds of 225 MPH.
+
 A wavelet filter, Gabor filter, and Gabor wavlet filter were successfully used to clasify corrugation defects on rail tracks\cite{railDefect}. In particular, the authors found the Gabor filter to be most successful. The image was first convolved with the Gabor filter at 4 different orientations. Each of these images were then evaluated with an energy distrubution function yielding the mean and variance.  The mean and variance from each filter orientation were assembled to create a feature vector of size 8 for the original image.
 
 \subsection{Adaptive View Planning}
 
-
+SUBSECTION TEXT
 
 \section{Methods}
 
