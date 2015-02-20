@@ -72,7 +72,7 @@ INTRODUCTION TEXT
 \subsection{Defect Detection}
 Defect detection is necessary within the manufacturing world to ensure both quality and safety. Despite the advanced automated techniques used to manufacture complex products, many products are still manually inspected. The process of manually inspecting parts is tedious and error prone. Furthermore, it can be highly mentally and ergonomically redundant, decreasing employee satisfaction and leading to increased physical strain. Due to resource constraints within companies, it can sap skilled workers away from productive tasks, leading to economic losses. In short, defect detection while important and necessary, is draining.
 
-Attempts and successes have been made in automating defect detection, but each defect detection process can be highly dependent upon the good manufactured. We have decided to focus on defects found during knife manufacturing. This process currently involves skilled workers taking two hour shifts from their normal job to visually inspect a batch of knives for a wide variety of defects. On average, a worker spends 5 seconds inspecting each knife with a 80 percent accuracy rate in detecting defects.
+Attempts and successes have been made in automating defect detection, but each defect detection process can be highly dependent upon the good manufactured \cite{defectGabor}\cite{defectSewer}. We have decided to focus on defects found during knife manufacturing. This process currently involves skilled workers taking two hour shifts from their normal job to visually inspect a batch of knives for a wide variety of defects. On average, a worker spends 5 seconds inspecting each knife with a 80 percent accuracy rate in detecting defects.
 
 \subsection{Computer Vision}
 
@@ -80,11 +80,12 @@ Computer vision, the automated extraction of meaningful information from images,
 
 Feature extraction is necessary to deal with the extremely large datasets that comprise a single image.  For example, a small 64x64 RGB icon has 4096 individual pixels, each of which can be thought of as a unique feature. When looked at as a more complex feature composed of multiple pixels (i.e. the pixels that make up a nose verus an eye), the number of possible features is exponential. 
 
-Feature extraction allows one to cut down the number of features examined from all possible features to a smaller, transformed subset of features that yields the most pertinent information. Feature extraction is different from feature selection in that feature selection simply grabs some subset of the original features and utilizes those.
+
+Feature extraction allows one to cut down the number of features examined from all possible features to a smaller, transformed subset of features that yields the most pertinent information. Feature extraction is different from feature selection in that feature selection simply grabs some subset of the original features and utilizes those \cite{featSelExt}.
 
 While there are general methods currently in use across machine learning to deal with feature extraction (e.g. PCA) and selection, there are specific methods used in computer vision that take advantage of the image data structure.
 
-Image classification is done using common machine learning techniques for classification. Machine learning comes in two forms: supervised and unsupervised. Unsupervised image classification is done by feeding an algorithm a large data set of images or videos and then allowing the machine to pick out the important features and classify these images. While still in its infancy, deep learning with neural networks have been used successfully. The problem with these algorithms at this stage, is that they rely on extremely large data sets and can take a long time to run, and are not yet ready for a real-time vision system. 
+Image classification is done using common machine learning techniques for classification. Machine learning comes in two forms: supervised and unsupervised. Unsupervised image classification is done by feeding an algorithm a large data set of images or videos and then allowing the machine to pick out the important features and classify these images. While still in its infancy, deep learning with neural networks have been used successfully. The problem with these algorithms at this stage, is that they rely on extremely large data sets and can take a long time to train and run, and are not yet ready for a real-time vision system \cite{deepLearning1}. 
 
 Unsupervised learning with image classification requires an expert to label a set of images beforehand. The labeled images are then used to instruct or train the classifier. While more tedious, given a large enough training set, these algorithms can be very efficient and effective.
 
