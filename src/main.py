@@ -68,7 +68,7 @@ def load_view_results(fname):
             else:
                 split_line = line.split(",")
                 
-                if split_line[1]  == 1:
+                if split_line[1]  == "1":
                     isDefect = True
                 else:
                     isDefect = False
@@ -130,7 +130,7 @@ def calc_movement_cost(state_x, state_y):
     """
     print "Calculating cost..."
     
-def plan_views(view_data, init_state):
+def plan_views(view_region_defs, view_results, view_region_mappings, init_state):
     """ Plans the states to view to categorize as an object.
         
         Returns a list of states.
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     
     # path planning algorithm
     init_state = 'blimey'
-    results = plan_views(view_data)
+    results = plan_views(view_region_defs, view_results, view_region_mappings, init_state)
     
     # nicely output results 
     output_results(results)
