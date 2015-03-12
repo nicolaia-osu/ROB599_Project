@@ -32,6 +32,7 @@ def plan_views(view_data, init_state):
     
     
     # states are view angles/locations
+    plan = []
     cur_state = init_state
     accum_cost = 0.0  # the accumulated costs of going from one view to another in plan
     total_certainty = 0.0 # the overall certainty we have about object at given point
@@ -39,8 +40,7 @@ def plan_views(view_data, init_state):
     certainty_threshold = 1.0 # optional, the confidence required to return answer
     planned = False
     
-    while (not planned):
-    
+    while (not planned):    
         # given set of views from current state
         #  perform 1 step look ahead w/ prob update
     
@@ -49,10 +49,7 @@ def plan_views(view_data, init_state):
     
         # calculate movement (view-to-view) cost
         accum_cost += calc_movement_cost(new_state, cur_state)
-        
-        # update state
-        cur_state = new_state
-        
+                    
         if accum_cost > budget:
             # we probably need to move this to be right below the calc
             # movement cost.  if the new cost + old cost > budget, then end
@@ -63,6 +60,12 @@ def plan_views(view_data, init_state):
             # we are confident enough to make a decision at this point
             planned = True
             break
+        
+        # update state
+        plan.append(new_state)
+        cur_state = new_state
+    
+    return plan
         
     
 def output_results(results):
