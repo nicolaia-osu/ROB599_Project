@@ -11,6 +11,7 @@ import os.path
 import time
 import sys
 import pickle
+import random
 
 # global variables so we don't have to pass these around if they get large
 """
@@ -328,6 +329,15 @@ def select_next_view(view_data, cur_state, accum_cost, budget):
     
     return next_state, next_state_val
 
+def select_next_random_view(view_data, cur_state, accum_cost, budget):
+    """ Gets the next view from cur state (view) that is within cost budget randomly
+        Returns next_state, value
+    """
+    next_state = random.choice(State.STATES_LIST)
+    next_state_val = get_state_value(next_state)
+
+    return next_state, next_state_val
+
         
 def get_views_greedy_horizon(init_state, budget):
     """ Decides the states to view to categorize as an object in an adaptive manner.
@@ -380,6 +390,57 @@ def get_views_greedy_horizon(init_state, budget):
     
     return path
 
+def get_views_random(init_state, budget):
+    """ Decides the states to view to categorize as an object in randomly.
+        
+        Returns a list of (states, entropy, time) that were visited as things executed.
+    """ 
+    print "Planning views..."    
+    
+    # states are view angles/locations
+    path = []
+    cur_state = init_state
+    accum_cost = 0.0  # the accumulated costs of going from one view to another in path relates to time in this instance
+    # total_certainty = 0.0 # the overall certainty we have about object at given point 
+    # certainty_threshold = 1.0 # optional, the confidence required to return answer
+    # total_reward = 0.0
+    decided = False
+    
+    while (not decided):    
+        # given set of views from current state
+        #  perform random choice
+    
+        # pick next state/view and get the val (eq, info gain...not to be confused with cost
+        new_state, new_state_val = select_next_random_view(cur_state, accum_cost, budget)
+    
+        # calculate movement (view-to-view) cost
+        move_cost = calc_movement_cost(new_state, cur_state)
+        
+        if (accum_cost + move_cost) > budget:
+            # out of time
+            break
+        
+        accum_cost += move_cost
+        
+        # if total_certainty > certainty_threshold:
+        #     # we are confident enough to make a decision at this point
+        #     decided = True
+        #     break
+        
+        # update state and add into path
+        entropy = get_entropy(new_state)
+
+        path.append((new_state, entropy, accum_cost))
+        
+        cur_state = new_state
+        # update reward
+        # total_reward += new_state_val
+        
+        # update probability distribution
+        update_prob_dist()
+    
+    return path
+
         
 def execute_planning(mappings_fname, view_results_fname, view_region_fname, budget):
     
@@ -390,10 +451,11 @@ def execute_planning(mappings_fname, view_results_fname, view_region_fname, budg
     
     # execute path planning algorithm
     init_state = State.X_90
-    results = get_views_greedy_horizon(init_state, budget)
-    
-    # nicely output results 
-    output_results(view_results_fname, results)
+    greedy_results = get_views_greedy_horizon(init_state, budget) 
+    output_results("greedy_" + view_results_fname, greedy_results)
+
+    random_results = get_views_random(init_state, budget)
+    output_results("random_" + view_results_fname, results)
     
 def output_results(results, view_results_fname):
     print
