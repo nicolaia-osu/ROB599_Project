@@ -76,6 +76,10 @@ def get_entropy(state):
     print "*************************"
     print "       Unimplemented!"
     print "*************************"
+
+    global view_region_mappings
+    global view_results
+    global view_region_defs
                         
     
 def getXY(state):
@@ -83,10 +87,24 @@ def getXY(state):
     
         Returns (x,y) tuple.
     """
-    if state == State.NINETY:
+    if state == State.X_30:
+       return (-2, 0)
+    elif state == State.X_60:
+        return (-1, 0)
+    elif state == State.X_90:
         return (0, 0)
-    elif state == State.HUNDRED:
+    elif state == State.X_120:
         return (1, 0)
+    elif state == State.X_150:
+        return (2, 0)
+    elif state == State.Y_30:
+        return (0, -2)
+    elif state == State.Y_60:
+        return (0, -1)
+    elif state == State.Y_120:
+        return (0, 1)
+    elif state == State.Y_150:
+        return (0, 2)
     else:
         print "Error! Don't recognize state"
         sys.exit(-1)
@@ -276,12 +294,17 @@ def load_view_region_definitions(fname):
                 
     return view_region_defs
 
-def update_prob_dist():
+def update_prob_dist(state_just_updated):
     """ Gabe to implement
     """
     # updates probability distribution based on ... ?
     print "updating prob"
     print "unimplemented!!!!"
+
+    global view_region_mappings
+    global view_results
+    global view_region_defs
+
                        
           
     
@@ -348,7 +371,7 @@ def get_views_greedy_horizon(view_region_defs, view_results, view_region_mapping
         total_reward += new_state_val
         
         # update probability distribution
-        update_prob_dist()
+        update_prob_dist(new_state_val)
     
     return (path, accum_cost, total_certainty)
 
