@@ -12,15 +12,57 @@ import time
 import sys
 
 # global variables so we don't have to pass these around if they get large
+"""
+"region_mapping.csv":
+
+True Knife Region 1, View 1 Region, View 2 Region, ... View 9 Region
+True Knife Region 2, View 1 Region, View 2 Region, ... View 9 Region
+...
+
+"view_#_results_#.csv":
+
+View Region 1, Defect [y/n] (0/1), Confidence Level [0 - 1]
+View Region 2, Defect [y/n] (0/1), Confidence Level [0 - 1]
+
+...
+
+"view_region_definitions.csv":
+
+View Region 1, X Degrees, Y Degrees
+View Region 2, X Degrees, Y Degrees
+"""
+
 view_region_mappings = {}
 view_results = {}
 view_region_defs = {}
 
 class State:
-    NINETY = 1
-    HUNDRED = 2
+    """
+    List of states.
+
+    Associated region int / angle
+
+    1,30,90
+    2,60,90
+    3,90,90
+    4,120,90
+    5,150,90
+    6,90,30
+    7,90,60
+    8,90,120
+    9,90,150
+    """
+    X_30 = 1
+    X_60 = 2
+    x_90 = 3
+    X_120 = 4
+    X_150 = 5
+    Y_30 = 6
+    Y_60 = 7
+    Y_120 = 8
+    Y_150 = 9
     
-    STATES_LIST = [1, 2]
+    STATES_LIST = [x for x in xrange(1,10)]
     
 def get_entropy(state):
     """ Gabe to implement.
@@ -173,6 +215,8 @@ def load_view_results(fname):
     global view_results
     view_results.clear()
         
+    pos_classifier_confidence = .8
+
     region = 1
     with open(fname, "r") as f:
         for line in f:
@@ -182,13 +226,13 @@ def load_view_results(fname):
                 split_line = line.split(",")
                 
                 if split_line[1]  == "1":
-                    isDefect = True
+                    classifier_confidence = pos_classifier_confidence
                 else:
-                    isDefect = False
+                    classifier_confidence = 1 - pos_classifier_confidence
                 
                 confidence = float(split_line[2])
                 
-                view_tuple = (isDefect, confidence)
+                view_tuple = (classifier_confidence, confidence)
                 view_results[region] = view_tuple
                 
                 region += 1
@@ -328,7 +372,7 @@ def output_results(results):
 
 if __name__ == "__main__":
     
-    directory = "./../data/"
+    directory = "./data/"
     
     # load files
     mappings_fname = "test.cvs"
