@@ -14,6 +14,12 @@ import pickle
 import random
 import math
 
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+import numpy as np
+
 """
 "view_state_definitions.csv":
 
@@ -134,7 +140,7 @@ def load_state_view_results(fname):
                 split_line = line.split(",")
 
                 region = int(split_line[0])
-                classifier = bool(split_line[1])
+                classifier = bool(int(split_line[1]))
 
                 view_results[region] = classifier
 
@@ -199,6 +205,17 @@ class State:
     Y_150 = 9
 
     STATES_LIST = [x for x in xrange(1,10)]
+    XYZ = {}
+    XYZ[1] = (8,  10,  0.5)
+    XYZ[2] = (8,  10,  0.71)
+    XYZ[3] = (4,  10, 1)
+    XYZ[4] = (0,  10,  0.5)
+    XYZ[5] = (0,  10,  0.71)
+    XYZ[6] = (4,  0,  0.5)
+    XYZ[7] = (4,  0,  0.71)
+    XYZ[8] = (4,  20,  0.5)
+    XYZ[9] = (4,  20,  0.71)
+                                
 
 class GreedyAlgorithm(object):
 
@@ -373,6 +390,7 @@ class GreedyAlgorithm(object):
         new_probabilities = {}
         confidence = self._view_confidence[next_state]
         results = self._view_results[next_state]
+
         for knife_region in self._knife_regions:
 
             current_probability = self._knife_region_probabilities[knife_region]
@@ -525,13 +543,20 @@ if __name__ == "__main__":
     view_state_fname = join(datadir, "view_state_definitions.csv")
     view_confidence_dir = datadir
 
-    num_trials = 2
+    #num_trials = 2
+    num_trials = 1
 
     # requirements
     budget = 4 * 1000 # 4 seconds..
     #budget = float('inf')
 
     results_to_plot = {}
+    num_random = 5
+
+    savefig_settings = {
+        'format':'pdf',
+        'bbox_inches':'tight',
+        'dpi':100}
 
     for trial in xrange(1, num_trials + 1):
 
@@ -556,33 +581,113 @@ if __name__ == "__main__":
         with open(join(alg_results_dir, "greedy.pickle"), "w") as f:
             pickle.dump(res, f)
         results_to_plot[trial,'greedy'] = res
-        alg = GreedyAlgorithm(mappings_fname,
-                              view_state_fname,
-                              view_results_dir,
-                              view_confidence_dir)
 
-        # execute random planning
-        start = time.clock()
-        res = alg.execute_planning(budget, do_random=True)
-        stop = time.clock()
-        print "Time elapsed for Random (secs): ", stop - start
-        # write results pickle to file
-        with open(join(alg_results_dir, "random.pickle"), "w") as f:
-            pickle.dump(res, f)
-        results_to_plot[trial,'random'] = res
-
-    import matplotlib.pyplot as plt
-    from matplotlib.backends.backend_pdf import PdfPages
+        results_to_plot[trial,'random'] = []
+        for i in xrange(num_random):
+            alg = GreedyAlgorithm(mappings_fname,
+                                  view_state_fname,
+                                  view_results_dir,
+                                  view_confidence_dir)
+            # execute random planning
+            start = time.clock()
+            res = alg.execute_planning(budget, do_random=True)
+            stop = time.clock()
+            print "Time elapsed for Random (secs): ", stop - start
+            # write results pickle to file
+            with open(join(alg_results_dir, "random.pickle"), "w") as f:
+                pickle.dump(res, f)
+            results_to_plot[trial,'random'].append(res)
 
     for trial in xrange(1, num_trials + 1):
 
+        alg_results_dir = join(resultsdir, "trial_{0}".format(trial))
+
+        pp = PdfPages(join(alg_results_dir, "plots.pdf"))
         greedy = results_to_plot[trial,'greedy']
         rand = results_to_plot[trial,'random']
 
-        plt.figure()
-        plt.title('Trial '+str(trial))
-        plt.plot([r[3] for r in greedy], [r[2] for r in greedy], label='Greedy', marker='s')
-        plt.plot([r[3] for r in rand], [r[2] for r in rand], label='Random', marker='o')
-        plt.legend(numpoints=1)
+        nrows = 8
+        ncols = 20
 
-    plt.show()
+        rad = max(nrows, ncols)*0.75
+        CX = np.linspace(ncols*0.5-rad*.9,ncols*0.5+rad*.9,25)
+        CY = np.linspace(nrows*0.5-rad*.9,nrows*0.5+rad*.9,25)
+        CX, CY = np.meshgrid(CX, CY)
+        CZ = np.sqrt(rad**2 - np.power(CX-ncols*0.5,2) - np.power(CY-nrows*0.5,2))
+
+
+        plt.figure()
+        plt.plot([r[3] for r in greedy], [r[2] for r in greedy],
+                 label='Greedy',
+                 marker='s', color='blue')
+        plt.ylim((0, greedy[0][2]))
+        plt.legend(numpoints=1)
+        plt.xlabel('Time Budget (ms)')
+        plt.ylabel('Total Entropy')
+        plt.savefig(pp, **savefig_settings)
+        for r in greedy:
+            fig = plt.figure()
+            X = np.array([i for i in xrange(ncols)])
+            Y = np.array([i for i in xrange(nrows)])
+            X, Y = np.meshgrid(X, Y)
+            Z = np.zeros((nrows, ncols))
+            for i in xrange(8):
+                for j in xrange(20):
+                    Z[i,j] = r[1][i * ncols + j + 1]
+
+            ax = fig.gca(projection='3d')
+            ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+                            rstride=1, cstride=1, antialiased=False)
+            #ax.scatter([State.XYZ[r[0]][0]],[State.XYZ[r[0]][1]],[State.XYZ[r[0]][2]])
+            #ax.plot_surface(CX, CY, CZ,
+            #                rstride=1, cstride=1, alpha=0.05, antialiased=True)
+            ax.set_zlim((0,1))
+            plt.savefig(pp, **savefig_settings)
+
+        plt.figure()
+        plt.plot([r[3] for r in rand[0]], [r[2] for r in rand[0]],
+                 label='Random',
+                 marker='o', color='green')
+        plt.ylim((0, rand[0][0][2]))
+        plt.xlabel('Time Budget (ms)')
+        plt.ylabel('Total Entropy')
+        plt.legend(numpoints=1)
+        plt.savefig(pp, **savefig_settings)
+        for r in rand[0]:
+            fig = plt.figure()
+            X = np.array([i for i in xrange(ncols)])
+            Y = np.array([i for i in xrange(nrows)])
+            X, Y = np.meshgrid(X, Y)
+            Z = np.zeros((nrows, ncols))
+            for i in xrange(8):
+                for j in xrange(20):
+                    Z[i,j] = r[1][i * ncols + j + 1]
+
+            ax = fig.gca(projection='3d')
+            ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+                            rstride=1, cstride=1, antialiased=True)
+            #ax.plot_surface(CX, CY, CZ,
+            #                rstride=1, cstride=1, alpha=0.05, antialiased=True)
+            ax.set_zlim((0,1))
+
+            plt.savefig(pp, **savefig_settings)
+
+        plt.figure()
+        plt.plot([r[3] for r in rand[0]], [r[2] for r in rand[0]],
+                 label='Random',
+                 marker='o', color='green')
+        plt.ylim((0, rand[0][0][2]))
+        for i in xrange(1, num_random):
+            plt.plot([r[3] for r in rand[i]], [r[2] for r in rand[i]],
+                     label="_nolegend_", marker='o', color='green')
+
+        plt.plot([r[3] for r in greedy], [r[2] for r in greedy],
+                 label='Greedy',
+                 marker='s', color='blue')
+        plt.xlabel('Time Budget (ms)')
+        plt.ylabel('Total Entropy')
+        plt.legend(numpoints=1)
+        plt.savefig(pp, **savefig_settings)
+
+    pp.close()
+    #plt.show()
