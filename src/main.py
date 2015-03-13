@@ -11,10 +11,30 @@ import os.path
 import time
 import sys
 
+# global variables so we don't have to pass these around if they get large
+view_region_mappings = {}
+view_results = {}
+view_region_defs = {}
+
 class State:
     NINETY = 1
     HUNDRED = 2
+    
     STATES_LIST = [1, 2]
+    
+def get_entropy(state):
+    """ Gabe to implement.
+    
+    Gets entropy for a given state.
+    *****************************
+            Unimplemented!
+    *****************************
+    """
+    print "Getting entropy value..."
+    print "*************************"
+    print "       Unimplemented!"
+    print "*************************"
+                        
     
 def getXY(state):
     """ Translates a state to an x,y coordinate value.
@@ -29,16 +49,13 @@ def getXY(state):
         print "Error! Don't recognize state"
         sys.exit(-1)
         
-def get_state_value(state):
+def get_state_value(from_state, to_state):
     """ Returns value of state
-    *****************************
-            Unimplemented!
-    *****************************
+        entropy over state
     """
-    print "Getting state value..."
-    print "*************************"
-    print "       Unimplemented!"
-    print "*************************"
+    entropy = get_entropy(to_state)
+    movement_cost = calc_movement_cost(from_state, to_state)
+    return entropy / movement_cost
     
 def manhattan_distance(location_a, location_b):
         """ returns manhattan_distance of (x,y) to (x2,y2)
@@ -99,24 +116,28 @@ def get_highest_value_move(states):
 
 
 def load_view_region_mappings(fname):
-    """ Returns a list of tuples.
+    """ Returns global dictionary of "region_tuples".
     
-        Index in region_mappings list correspond to view angle/state.
+        Key in region_mappings list correspond to view angle/state.
+        
         Index into region_tuple correspond to:
             0 = True region
             1 = mapping at view from 1
             2 = mapping at view from 2
             3 = mapping at view from 3
         
-        e.g region_tuple_two = region_mappings[1] yields a tuple of mappings for the second viewing angle/state
+        e.g 
+            region_tuple_two = region_mappings[2] yields a tuple of mappings for the second viewing angle/state
             region_tuple_two[0] = true knife region for second viewing angle/state
             region_tuple_two[3] = mapping for second viewing angle/state region
     """ 
     print "Data Source: ", fname
     print "Loading view region mappings..."
     
-    region_mappings = [] # regions will be a list of tuples
+    global region_mappings
+    region_mappings.clear()
     
+    region = 1
     with open(fname, "r") as f:
         for line in f:
             if line.startswith("#"): 
@@ -124,12 +145,14 @@ def load_view_region_mappings(fname):
                 continue
             else:
                 region_tuple = map(lambda x: int(x), line.split(","))
-                region_mappings.append(tuple(region_tuple))
+                region_mappings[region] = tuple(region_tuple)
+                region += 1
+                
                     
     return region_mappings
 
 def load_view_results(fname):
-    """ Returns list of tuples.
+    """ Returns global dictionary of tuples.
     
             File name expected to have name:
             view_*_results_*.csv : the first wildcard represents the given view number
@@ -142,17 +165,15 @@ def load_view_results(fname):
             List of tuples in form:
                 (True/False, ConfidenceFloat)
                 
-                To get tuple for region 1, you would index list 1.
-                The tuple at index 0 is an undefined placeholder used to make 
-                    indexing easier.
-        
+                To get tuple for region 1, you would use key 1.        
     """
     print "Data Source: ", fname
     print "Loading view results..."
     
-    view_results = []
-    view_results.append(("NAN"))
-    
+    global view_results
+    view_results.clear()
+        
+    region = 1
     with open(fname, "r") as f:
         for line in f:
             if line.startswith("#"):
@@ -166,31 +187,33 @@ def load_view_results(fname):
                     isDefect = False
                 
                 confidence = float(split_line[2])
+                
                 view_tuple = (isDefect, confidence)
-                view_results.append(view_tuple)
+                view_results[region] = view_tuple
+                
+                region += 1
                 
     return view_results
 
 def load_view_region_definitions(fname):
-    """ Returns list of tuples.
+    """ Returns global dictionary of tuples.
                
             File in format: 
                 View Region 1, X Degrees, Y Degrees
                 View Region 2, X Degrees, Y Degrees
                 
             List of tuples in form:
-                [(X degrees, y degrees),...]
+                [1:(X degrees, y degrees),...2:(xdegrees, ydegrees)]
                 
-                To get tuple for region 1, you would index list 1.
-                The tuple at index 0 is an undefined placeholder used to make 
-                    indexing easier.        
+                To get tuple for region 1, you would use key 1.  
     """
     print "Data Source: ", fname
     print "Loading view region definitions..."
     
-    view_region_defs = []
-    view_region_defs.append(("NAN"))
+    global view_region_defs
+    view_region_defs.clear()
     
+    region = 1
     with open(fname, "r") as f:
         for line in f:
             if line.startswith("#"):
@@ -202,9 +225,20 @@ def load_view_region_definitions(fname):
                 yDegrees = float(split_line[2])
                 
                 view_def = (xDegrees, yDegrees)
-                view_region_defs.append(view_def)
+                
+                view_region_defs[region] = view_def
+                
+                region += 1
                 
     return view_region_defs
+
+def update_prob_dist():
+    """ Gabe to implement
+    """
+    # updates probability distribution based on ... ?
+    print "updating prob"
+    print "unimplemented!!!!"
+                       
           
     
 def select_next_view(view_data, cur_state, accum_cost, budget):
@@ -228,14 +262,14 @@ def select_next_view(view_data, cur_state, accum_cost, budget):
 def get_views_greedy_horizon(view_region_defs, view_results, view_region_mappings, init_state, budget):
     """ Decides the states to view to categorize as an object in an adaptive manner.
         
-        Returns a list of states that were visited, along with total reward, total cost, total certainty.
+        Returns a list of (states, time) that were visited, along with total reward, total time cost, total certainty.
     """ 
     print "Planning views..."    
     
     # states are view angles/locations
     path = []
     cur_state = init_state
-    accum_cost = 0.0  # the accumulated costs of going from one view to another in path
+    accum_cost = 0.0  # the accumulated costs of going from one view to another in path relates to time in this instance
     total_certainty = 0.0 # the overall certainty we have about object at given point 
     certainty_threshold = 1.0 # optional, the confidence required to return answer
     total_reward = 0.0
@@ -263,7 +297,7 @@ def get_views_greedy_horizon(view_region_defs, view_results, view_region_mapping
             break
         
         # update state and add into path
-        path.append(new_state)
+        path.append((new_state, accum_cost))
         cur_state = new_state
         
         # update reward
@@ -294,20 +328,37 @@ def output_results(results):
 
 if __name__ == "__main__":
     
+    directory = "./../data/"
+    
     # load files
     mappings_fname = "test.cvs"
-    view_results_fname = "text.csv"
+#     view_results_fname = "text.csv"
     view_region_fname = "test.csv"
     
-    # requirements
-    budget = 4 * 1000 # 4 seconds..
+    global view_region_mappings
+    global view_results
+    global view_region_defs
     
-    # execute planning
-    start = time.clock()
-    execute_planning(mappings_fname, view_results_fname, view_region_fname, budget)
-    stop = time.clock()
+    regions = [x for x in xrange(1,10)]
+    num_trials = 10
     
-    print "Time elapsed (secs): ", stop - start
+    for region in regions:
+        
+        for i in xrange(0, num_trials):
+            view_results_fname = 'view_{0}_results_{1}.csv'.format(i , region) 
+    
+            # requirements
+            budget = 4 * 1000 # 4 seconds..
+            
+            # execute planning
+            start = time.clock()
+            execute_planning(mappings_fname, view_results_fname, view_region_fname, budget)
+            stop = time.clock()
+            
+            print "Time elapsed (secs): ", stop - start
+       
+        
+   
     
     
     
