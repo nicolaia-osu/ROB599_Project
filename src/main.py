@@ -454,6 +454,11 @@ def execute_planning(mappings_fname, view_results_fname, view_region_fname, budg
     greedy_results = get_views_greedy_horizon(init_state, budget) 
     output_results("greedy_" + view_results_fname, greedy_results)
 
+    # doing same for random
+    view_region_mappings = load_view_region_mappings(mappings_fname)
+    view_results = load_view_results(view_results_fname)
+    view_region_defs = load_view_region_definitions(view_region_fname)
+
     random_results = get_views_random(init_state, budget)
     output_results("random_" + view_results_fname, results)
     
