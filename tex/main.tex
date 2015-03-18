@@ -67,11 +67,11 @@ Active Planning for Defect Detection in the Knife Domain
 \section{Introduction}
 
 
-Defect detection is an interesting problem in automated manufacturing. Even though automated processes can be more consistent than human laborers, defects can occur due to a number of complex internal or external factors.  These defects can range from slight cosmetic blemishes to safety-threatening faults. The ability to quickly and accurately identify defects as soon as possible within the manufacturing process is important to ensure smooth operation, resource efficiency, and quality products.
+Despite the advanced automated techniques used to manufacture complex products, many products are still undergo a manual visual inspection. 
 
-Despite the advanced automated techniques used to manufacture complex products, many products are still manually inspected. This can cost companies and workers valuable resources.
+Even though automated manufacturing processes can be more consistent than human laborers, defects can occur due to a number of complex internal or external factors. These defects can range from slight cosmetic blemishes to safety-threatening faults. The ability to quickly and accurately identify defects as soon as possible within the manufacturing process is important to ensure smooth operation, resource efficiency, and quality products. Conducting the inspection process manually has the potential to drain valuable workers away from other important tasks.
 
-With this in mind, this paper examines the above problems in the knife domain. The contributions of this paper are twofold:\\
+With this in mind, this paper examines automating the defect detection process in the consumer knife domain. The contributions of this paper are twofold:\\
 
 \begin{enumerate}
 	\item[1.] We analyze the effectiveness of using computer vision techniques with both adaptive planning and human-informed planning for active classification.\\
@@ -81,19 +81,18 @@ With this in mind, this paper examines the above problems in the knife domain. T
 \section{Related Work}
 
 \subsection{Defect Detection}
-Defect detection is necessary to ensure both quality and safety. The process of manually inspecting parts is tedious and error prone. Furthermore, it can be highly mentally and ergonomically redundant, decreasing employee satisfaction and leading to increased physical strain. Due to resource constraints within companies, it can sap skilled workers away from productive tasks, leading to economic losses.
+Defect detection is necessary to ensure both quality and safety. The process of manually inspecting parts is tedious and error prone \cite{automatedVisionInspection}. Furthermore, it can be highly mentally and ergonomically repetitive, decreasing employee satisfaction and leading to increased physical strain \cite{evans2005management}\cite{eklund1997ergonomics}. Due to resource constraints within companies, it can sap skilled workers away from productive tasks, leading to economic losses.
 
 
-Attempts and successes have been made in automating defect detection, but each defect detection process can be highly dependent upon the good manufactured \cite{defectGabor}\cite{defectSewer}. We have decided to focus on defects found during knife manufacturing. One example of this process involves quality assurance workers visually inspecting batches of knives for a wide variety of defects. Characterization of a defect varies between knife type, defect type, and defect severity. On average, a worker may spend four seconds (two per side) inspecting each knife and typically achieves an accuracy upper-bounded by 80\%.
+Attempts and successes have been made in automating defect detection, but each defect detection process can be highly dependent upon the good manufactured \cite{automatedVisionInspection}\cite{defectGabor}\cite{defectSewer}. We have decided to focus on defects found during knife manufacturing. One example of this process involves quality assurance workers visually inspecting batches of knives for a wide variety of defects. Characterization of a defect varies between knife type, defect type, and defect severity. On average, a worker may spend four seconds (two per side) inspecting each knife and typically achieves an accuracy upper-bounded by 80\%.
+
+Our setup is built around this example. In practice, solving the problem of knife defect detection requires an end-to-end system comprised of a vision system, a knife manipulation system, and an accurate classification system. We implemented a robust vision system and accurate classification system while simulating the knife manipulation system. We use the 4 seconds average as the time limit that each knife has to be assessed.
 
 \subsection{Computer Vision}
 
 Computer vision, the automated extraction of meaningful information from images, relies on two key components for success: feature extraction and image classification. 
 
-Feature extraction is necessary to deal with the extremely large datasets that comprise a single image.  For example, a small 64x64 RGB icon has 4096 individual pixels, each of which can be thought of as a unique feature. When looked at as a more complex feature composed of multiple pixels (i.e. the pixels that make up a nose verus an eye), the number of possible features is exponential. 
-
-
-Feature extraction allows one to cut down the number of features examined from all possible features to a smaller, transformed subset of features that yields the most pertinent information. Feature extraction is different from feature selection in that feature selection simply grabs some subset of the original features and utilizes those \cite{featSelExt}.
+Feature extraction is necessary to deal with the extremely large datasets that comprise a single image; it allows one to cut down the number of features examined from all possible features to a smaller, transformed subset of features that yields the most pertinent information. Feature extraction is different from feature selection in that feature selection simply grabs some subset of the original features and utilizes those \cite{featSelExt}.
 
 While there are general methods currently in use across machine learning to deal with feature extraction (e.g. Principal Component Analysis) and selection, there are specific methods used in computer vision that take advantage of the image data structure.
 
@@ -112,6 +111,8 @@ Informative Path Planning (IPP) is defined as autonomously deciding what path to
 Adaptive View Planning (AVP) is a specialized case of IPP. AVP seeks to optimize the classification success rate in the shortest amount of time or lowest path cost by having an autonomous agent decide which view angles give the most pertinent information necessary to correctly classify a specific object. The planning is adaptive in the sense that what is seen from one view angle impacts which view angle the agent decide to move to and look at next\cite{hollinger2011active}. 
 
 This problem has been examined in the domain of examining ship hulls for mines \cite{hollinger2011active}. The authors reduced the number of needed views by 80 percent compared to non-adaptive methods.
+
+Based on ____ work, we will be using the greedy horizon approach that relied on monotonicity rather than submodularity.
 
 \section{Methods}
 
