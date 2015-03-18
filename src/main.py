@@ -203,6 +203,7 @@ class State:
     Y_60 = 7
     Y_120 = 8
     Y_150 = 9
+    NOSTATE = 10
 
     STATES_LIST = [x for x in xrange(1,10)]
     XYZ = {}
@@ -225,7 +226,7 @@ class GreedyAlgorithm(object):
                  state_view_results_dir,
                  state_view_confidence_dir):
 
-        self._current_state = None
+        self._current_state = State.NOSTATE
 
         # load view states
         self._view_states = \
@@ -327,7 +328,7 @@ class GreedyAlgorithm(object):
 
         movement_cost = self.calc_movement_cost(self._current_state, next_state)
 
-        return information_gain / movement_cost
+        return (information_gain, movement_cost)
 
     def manhattan_distance(self, location_a, location_b):
             """ returns manhattan_distance of (x,y) to (x2,y2)
@@ -363,6 +364,9 @@ class GreedyAlgorithm(object):
         base_cost = 100
         # cost to go from one view angle to other (motor time)
         angle_to_angle_cost = 200
+        if (state_x == State.NOSTATE) or \
+           (state_y == State.NOSTATE):
+            return 0.0
 
         if state_x == state_y:
             return base_cost
@@ -377,10 +381,10 @@ class GreedyAlgorithm(object):
         max_value = float('-inf')
 
         for next_state in states:
-            val = self.get_state_value(next_state)
-            if val > max_value:
+            entropy_gain, cost = self.get_state_value(next_state)
+            if entropy_gain / cost > max_value:
                 max_state = next_state
-                max_value = val
+                max_value = (entropy_gain, cost)
 
         return (max_state, max_value)
 
@@ -469,12 +473,24 @@ class GreedyAlgorithm(object):
         #total_reward = 0.0
         decided = False
 
+        path.append((State.NOSTATE,
+                     self._knife_region_probabilities,
+                     self.get_entropy(self._knife_region_probabilities),
+                     accum_cost,
+                    (0.0,0.0)))
+        # The start state requires no budget cost
+        # from the initiali NOSTATE, where the initial probability
+        # distributions are recorded
+        init_state_val = self.get_state_value(init_state)
         self.update_current_state(init_state)
+        self._knife_region_probabilities = \
+                self.update_prob_dist(self._current_state)
         path.append((self._current_state,
                      self._knife_region_probabilities,
                      self.get_entropy(self._knife_region_probabilities),
-                     accum_cost))
-
+                     accum_cost,
+                     init_state_val))
+        print init_state_val
         while (not decided):
             # given set of views from current state
             # perform 1 step look ahead w/ prob update
@@ -516,7 +532,8 @@ class GreedyAlgorithm(object):
             path.append((self._current_state,
                          self._knife_region_probabilities,
                          self.get_entropy(self._knife_region_probabilities),
-                         accum_cost))
+                         accum_cost,
+                         new_state_val))
 
             # update reward
             # total_reward += new_state_val
@@ -551,7 +568,7 @@ if __name__ == "__main__":
     #budget = float('inf')
 
     results_to_plot = {}
-    num_random = 5
+    num_random = 1000
 
     savefig_settings = {
         'format':'pdf',
@@ -609,13 +626,6 @@ if __name__ == "__main__":
         nrows = 8
         ncols = 20
 
-        rad = max(nrows, ncols)*0.75
-        CX = np.linspace(ncols*0.5-rad*.9,ncols*0.5+rad*.9,25)
-        CY = np.linspace(nrows*0.5-rad*.9,nrows*0.5+rad*.9,25)
-        CX, CY = np.meshgrid(CX, CY)
-        CZ = np.sqrt(rad**2 - np.power(CX-ncols*0.5,2) - np.power(CY-nrows*0.5,2))
-
-
         plt.figure()
         plt.plot([r[3] for r in greedy], [r[2] for r in greedy],
                  label='Greedy',
@@ -624,6 +634,16 @@ if __name__ == "__main__":
         plt.legend(numpoints=1)
         plt.xlabel('Time Budget (ms)')
         plt.ylabel('Total Entropy')
+        plt.savefig(pp, **savefig_settings)
+        plt.figure()
+        plt.plot(list(xrange(len(greedy))),
+                 [sum(r[4][0] for r in greedy[:s+1]) for s in xrange(len(greedy))],
+                 label='Greedy',
+                 marker='s', color='blue')
+        #plt.ylim((0, greedy[0][2]))
+        plt.legend(numpoints=1,loc=2)
+        plt.xlabel('Number of Views')
+        plt.ylabel('Cumulative Information')
         plt.savefig(pp, **savefig_settings)
         for r in greedy:
             fig = plt.figure()
@@ -638,9 +658,6 @@ if __name__ == "__main__":
             ax = fig.gca(projection='3d')
             ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
                             rstride=1, cstride=1, antialiased=False)
-            #ax.scatter([State.XYZ[r[0]][0]],[State.XYZ[r[0]][1]],[State.XYZ[r[0]][2]])
-            #ax.plot_surface(CX, CY, CZ,
-            #                rstride=1, cstride=1, alpha=0.05, antialiased=True)
             ax.set_zlim((0,1))
             plt.savefig(pp, **savefig_settings)
 
@@ -652,6 +669,16 @@ if __name__ == "__main__":
         plt.xlabel('Time Budget (ms)')
         plt.ylabel('Total Entropy')
         plt.legend(numpoints=1)
+        plt.savefig(pp, **savefig_settings)
+        plt.figure()
+        plt.plot(list(xrange(len(rand[0]))),
+                 [sum(r[4][0] for r in rand[0][:s+1]) for s in xrange(len(rand[0]))],
+                 label='Random',
+                 marker='s', color='green')
+        #plt.ylim((0, rand[0][0][2]))
+        plt.legend(numpoints=1,loc=2)
+        plt.xlabel('Number of Views')
+        plt.ylabel('Cumulative Information')
         plt.savefig(pp, **savefig_settings)
         for r in rand[0]:
             fig = plt.figure()
@@ -666,8 +693,6 @@ if __name__ == "__main__":
             ax = fig.gca(projection='3d')
             ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
                             rstride=1, cstride=1, antialiased=True)
-            #ax.plot_surface(CX, CY, CZ,
-            #                rstride=1, cstride=1, alpha=0.05, antialiased=True)
             ax.set_zlim((0,1))
 
             plt.savefig(pp, **savefig_settings)
@@ -687,6 +712,52 @@ if __name__ == "__main__":
         plt.xlabel('Time Budget (ms)')
         plt.ylabel('Total Entropy')
         plt.legend(numpoints=1)
+        plt.savefig(pp, **savefig_settings)
+
+        plt.figure()
+        plt.plot(list(xrange(len(rand[0]))),
+                 [sum(r[4][0] for r in rand[0][:s+1]) for s in xrange(len(rand[0]))],
+                 label='Random',
+                 marker='o', color='green')
+        #plt.ylim((0, rand[0][0][2]))
+        for i in xrange(1, num_random):
+            plt.plot(list(xrange(len(rand[i]))),
+                     [sum(r[4][0] for r in rand[i][:s+1]) for s in xrange(len(rand[i]))],
+                     label="_nolegend_", marker='o', color='green')
+
+        plt.plot(list(xrange(len(greedy))),
+                 [sum(r[4][0] for r in greedy[:s+1]) for s in xrange(len(greedy))],
+                 label='Greedy',
+                 marker='s', color='blue')
+        plt.xlabel('Number of Views')
+        plt.ylabel('Cumulative Information')
+        plt.legend(numpoints=1,loc=2)
+        plt.savefig(pp, **savefig_settings)
+
+
+        plt.figure()
+        #plt.ylim((0, rand[0][0][2]))
+        data = [[] for s in xrange(len(greedy)-1)]
+        for i in xrange(num_random):
+            for s in xrange(len(greedy)-1):
+                if s+1 < len(rand[i]):
+                    data[s].append(sum(r[4][0] for r in rand[i][:s+1+1]))
+                else:
+                    data[s].append(data[s-1][-1])
+        bp = plt.boxplot(data, labels=list(xrange(1,len(greedy))), showfliers=False)
+        plt.setp(bp['boxes'], color='green')
+        plt.setp(bp['whiskers'], color='green')
+        plt.setp(bp['caps'], color='green')
+        plt.plot(list(xrange(len(greedy))),
+                 [sum(r[4][0] for r in greedy[:s+1]) for s in xrange(len(greedy))],
+                 label='Greedy',
+                 marker='s', color='blue')
+        plt.xlabel('Number of Views')
+        plt.ylabel('Cumulative Information')
+        hR, = plt.plot([1,1],color='green',label='Random')
+        plt.xlim([0,len(greedy)-1])
+        plt.legend(numpoints=1,loc=2)
+        hR.set_visible(False)
         plt.savefig(pp, **savefig_settings)
 
     pp.close()
