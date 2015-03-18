@@ -1,0 +1,8 @@
+P(\mathbf{e}|D_i) &\in \{0.2,0.8\}\\
+P(D_i|\mathbf{e}) &= \frac{P(\mathbf{e}|D_i) \cdot P(D_i)}{P(\mathbf{e}|D_i) \cdot P(D) + \left(1-P(\mathbf{e}|D_i)\right) \cdot \left(1-P(D_i)\right)}, \;\;i\in \mathcal{K}\\\\
+P(D_i)^{\theta_0} &= 0.5\\
+P(D_i)^{\theta_{t+1}} &= \beta_i^{\theta} \cdot P(D_i|\mathbf{e}) + (1 - \beta_i^{\theta}) \cdot P(D_i)^{t}\\
+\beta_i^{\theta} &\in [0.3 - 0.85], \;\;i\in\mathcal{K},\;\theta\in\Theta^t\\\\
+\text{MoveValue}(\theta_{t+1}) &= \frac{H(\theta_t) - H(\theta_{t+1})}{\text{MoveCost}(\theta_t,\theta_{t+1})}\\
+H(\theta) &= \sum_{i\in\mathcal{K}} H(P(D_i)^\theta)\\
+\theta_{t+1} &= \underset{\theta'\in\Theta^t}{\text{argmax}}\text{ MoveValue}(\theta')
