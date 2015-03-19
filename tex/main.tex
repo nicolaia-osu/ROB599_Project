@@ -69,13 +69,13 @@ Active Planning for Defect Detection in the Knife Domain
 
 Even though automated manufacturing processes can be more consistent than human laborers, defects can occur due to a number of complex internal or external factors. These defects can range from slight cosmetic blemishes to safety-threatening faults \cite{matScience}. The ability to quickly and accurately identify defects as soon as possible within the manufacturing process is important to ensure smooth operation, resource efficiency, and quality products. 
 
-Despite the advanced automated techniques used to manufacture complex products, many products still undergo a manual visual inspection. Yet, the inspection of products is a necessary component of quality control and assurance; using skilled workers for the inspection process drains valuable workers away from other important tasks.
+Despite the advanced automated techniques used to manufacture complex products, many products still undergo a manual visual inspection. Yet, the inspection of products is a necessary component of quality control and assurance; using skilled workers for the inspection process however, drains valuable workers away from other important tasks.
 
 With this in mind, we examine automating the defect detection process in the consumer-grade knife domain. The contributions of this paper are twofold:\\
 
 \begin{enumerate}
 	\item[1.] We analyze the effectiveness of using computer vision techniques with adaptive planning for active classification.\\
-	\item[2.] We apply and test our approach to active classification in the consumer knife domain with real-world data.\\
+	\item[2.] We successfully apply and test our approach to active classification in the consumer knife domain with real-world data.\\
 \end{enumerate}
 
 \section{Related Work}
@@ -84,9 +84,11 @@ With this in mind, we examine automating the defect detection process in the con
 Defect detection is key to ensure both quality and safety. The process of manually inspecting parts is tedious and error prone \cite{automatedVisionInspection}. Furthermore, it can be highly mentally and ergonomically repetitive, decreasing employee satisfaction and leading to increased physical strain \cite{evans2005management}\cite{eklund1997ergonomics}. Due to resource constraints within companies, it can sap skilled workers away from productive tasks, leading to economic losses.
 
 
-Attempts and successes have been made in automating defect detection, but each defect detection process can be highly dependent upon the good manufactured \cite{automatedVisionInspection}\cite{defectGabor}\cite{defectSewer}. We have decided to focus on defects found during knife manufacturing. One example of this process involves quality assurance workers visually inspecting batches of knives for a wide variety of defects. Characterization of a defect varies between knife type, defect type, and defect severity. On average, a worker may spend four seconds (two per side) inspecting each knife and typically achieves an accuracy upper-bounded by 80\%.
+Attempts and successes have been made in automating defect detection, but each defect detection process can be highly dependent upon the good manufactured \cite{automatedVisionInspection}\cite{defectGabor}\cite{defectSewer}.
 
-Our setup is built around this example. In practice, solving the problem of knife defect detection requires an end-to-end system comprised of a vision system, a knife manipulation system, and an accurate classification system. We focused on implementing a robust vision system and accurate classification system while simulating the knife manipulation system. We use the 4 seconds average as the time limit that each knife may use before a final assessment as to whether or not it contains a defect.
+We have decided to focus on defects created during knife manufacturing. One example of this process involves quality control workers visually inspecting batches of knives for a wide variety of defects. Characterization of a defect varies between knife type, defect type, and defect severity. On average, a worker may spend four seconds (two per side) inspecting each knife and typically achieves an accuracy upper-bounded by 80\%.
+
+Our setup is built around this example. We show that active classification for defects in knives is possible using a modern vision sytem united with an adaptive planning algorithm.
 
 \subsection{Computer Vision}
 
@@ -117,6 +119,10 @@ The detection of defects in knives maps well to the AVP method. A worker might c
 Due to this close mapping and the success of similar methods in other domains, we will be using an adaptive view planning algorithm that utilizes a greedy horizon approach to actively classify one type of defect in a consumer-grade knife.
 
 \section{Methods}
+
+In practice, solving the problem of knife defect detection requires an end-to-end system comprised of a vision system, a knife manipulation system, and an accurate classification system. We focused on implementing a robust vision system and accurate classification system while simulating the knife manipulation system. We use the 4 seconds average as mentioned earlier (S II A) as the time limit that each knife may use before a final assessment as to whether or not it contains a defect.
+
+In particular, we examine a knife with a ding??
 
 \subsection{Data Generation}
 
