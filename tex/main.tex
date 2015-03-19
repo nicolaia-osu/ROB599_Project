@@ -120,9 +120,10 @@ Due to this close mapping and the success of similar methods in other domains, w
 
 \subsection{Data Generation}
 
-In order to accurately detect surface defects in knives, a classifier must be trained. To ensure the classifier is robust, it must be trained on a large, and comprehensive, set of data.
 
-In generating our data, the knives were first filmed under a variety of lighting conditions from multiple angles. Still images were then extracted to create a training set. The images selected represent many different angles and several lighting conditions. In the image set, there exist both positive and negative examples of the defect.
+A large, comprehensive data set is needed to train a robust classifier capable of accurately detecting surface defects in knives.
+
+To generate our data, the knives were first filmed under a variety of lighting conditions from multiple angles. Still images were then extracted to create a training set. The images selected represent many different angles and several lighting conditions. The image set contains both positive and negative examples of the defect.
 
 Next, a sliding window technique was used to generate additional training data from the image set. This process is shown in \textit{Figure \ref{fig:data generation}}. This was accomplished using a custom program that allows a user to specify the location of all defect corners. From this, the sliding window is able to automatically determine if the region contains a defect. Using this information, the program is able to automatically label the training set data for use in supervised learning.
 
@@ -159,7 +160,7 @@ Next, a sliding window technique was used to generate additional training data f
 
 \subsection{Computer Vision Algorithm}
 
-The computer vision algorithm employed in this paper was first proposed by for use in defect detection in railroad tracks \cite{railDefect}. The algorithm uses Gabor filters and an energy distribution function to extract features from an input image. The classification is performed by an SVM classifier. A flowchart of the algorithm can be seen in \textit{Figure \ref{fig:vision algorithm diagram}}.
+The computer vision algorithm employed in this paper was first proposed for use in defect detection in railroad tracks \cite{railDefect}. The algorithm uses Gabor filters and an energy distribution function to extract features from an input image. The classification is performed by an SVM classifier. A flowchart of the algorithm can be seen in \textit{Figure \ref{fig:vision algorithm diagram}}.
 
 First, the input image is fed through a filter bank consisting of Gabor filters. Four wavelet orientations are used: \textit{0\degree}, \textit{45\degree}, \textit{90\degree}, and \textit{135\degree}. Each orientation is replicated for three different filter sizes. This yields a total of twelve filters. Next, the magnitude operator is applied to the filtered images. 
 
