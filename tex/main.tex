@@ -28,6 +28,7 @@
 \usepackage{float}
 %\usepackage{enumitem}
 \renewcommand{\deg}{\ensuremath{^{\circ}}\xspace}  % why doesn't this work???
+\captionsetup{justification=centering}
 
 \providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
 
@@ -205,13 +206,82 @@ The order in which views will be selected by the planner will depend upon the pr
 
 Additional considerations such as reflection angle against light resources could have a significant effect on how well knife defects are identified in images will need to be considered. In most cases, the physical manifold changes between knife types. Given the knife surfaces particular to the current knife unit being examined, a single image capture could be replaced with multiple image captures at different reflection angles to maximize the possibility of defect discovery.
 
-\subsection{Human-Informed Planning}
+\begin{figure*}
+    \centering
+    \begin{subfigure}[b]{.24\textwidth}
+        \centering
+        \includegraphics[width=.99\textwidth]{greedy1.png}
+        \caption{Greedy selection \\ after 0 views}
+        \vspace*{2mm}
+        \label{fig:greedy0view}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.24\textwidth}
+        \centering
+        {\includegraphics[width=.99\textwidth]{greedy2.png}}
+        \caption{Greedy selection \\ after 2 views}
+        \vspace*{2mm}
+        \label{fig:greedy2view}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.24\textwidth}
+        \centering
+        {\includegraphics[width=.99\textwidth]{greedy3.png}}
+        \caption{Greedy selection \\ after 5 views}
+        \vspace*{2mm}
+        \label{fig:greedy5view}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.24\textwidth}
+        \centering
+        {\includegraphics[width=.99\textwidth]{greedy4.png}}
+        \caption{Greedy selection \\ after 8 views}
+        \vspace*{2mm}
+        \label{fig:greedy8view}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.24\textwidth}
+        \centering
+        {\includegraphics[width=.99\textwidth]{random1.png}}
+        \caption{Random selection \\ after 0 views}
+        \vspace*{2mm}
+        \label{fig:rand0view}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.24\textwidth}
+        \centering
+        {\includegraphics[width=.99\textwidth]{random2.png}}
+        \caption{Random selection \\ after 2 views}
+        \vspace*{2mm}
+        \label{fig:rand2view}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.24\textwidth}
+        \centering
+        {\includegraphics[width=.99\textwidth]{random3.png}}
+        \caption{Random selection \\ after 5 views}
+        \vspace*{2mm}
+        \label{fig:rand5view}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.24\textwidth}
+        \centering
+        {\includegraphics[width=.99\textwidth]{random4.png}}
+        \caption{Random selection \\ after 7 views}
+        \vspace*{2mm}
+        \label{fig:rand7view}
+    \end{subfigure}
+    \caption{Probability of defect by knife region. Note that the greedy \\ selection achieves 8 views in the time budget while the random \\ selection only achieves 7 views in the same time frame.}
+    \label{fig:prob_dists}
+\end{figure*}
 
-In addition to adaptive planning, we will investigate the use of incorporating actual human inspection paths in the path planning algorithm. The motivation for this is that through experience, skilled human inspectors build a large knowledge base of how/where defects typically present. This allows them to inspect knives more effectively than a novice. We theorize that in most cases, human inspectors will follow a general view sequence that they have learned works well. When the inspector notices something that is a potential defect, they may adjust their view sequence to more closely inspect that area.
-
-This data can be incorporated into the adaptive view planning algorithm by using it to help adjust information levels along the knife surface. That is, if a human inspector typically transitions from one view to small subset of views, we can inflate the information in regions that will increase the likelihood of the planner to select that subset of views.
-
-Additionally, with information on when in their view sequence the inspectors believe they see defects, we can more accurately adjust the region information values. For example, inspectors may generally transition from their current view to a given subset of views. However, if they believe they see a defect, perhaps they will iterate through a different subset of views to further inspect the current region. We can use this information to adjust which regions of information we inflate based upon the actual, or expected, output of the vision system. That is, if the vision system strongly believes a defect to be present in a region, we may inflate the information values of one subset of regions. However, if the vision system believes a region to be clear of defects, we may inflate a different subset of regions.
+\begin{figure}
+    \centering
+    \includegraphics[width=.49\textwidth]{info_gain_views.png}
+    \caption{Cumulative information gained}
+    \vspace*{2mm}
+    \label{fig:cumulative_info}
+\end{figure}
 
 \section{Results}
 
@@ -221,13 +291,7 @@ Initial testing of the proposed vision algorithm shows good results. Initial res
 
 While additional parameter tuning in the vision algorithm may yield higher detection rate, there are other avenues to explore. These avenues include the use of alternative lighting sources (e.g. near field, dark field), as previously mentioned. The use of these lighting sources may help to increase the visibility of defects, and thus make them easier to classify. This, in turn, will lead to a higher defect detection rate for the classifier.
 
-\subsection{Adaptive Planning}
-
-\textit{Adaptive Planning results text will go here}
-
-\subsection{Human-Informed Planning}
-
-\textit{Human-Informed Planning results text will go here}
+\subsection{Planning Algorithm}
 
 \section{Discussion}
 
@@ -235,7 +299,11 @@ While additional parameter tuning in the vision algorithm may yield higher detec
 
 \section{Conclusions and Future Work}
 
-\textit{Conclusions and Future Work text will go here}
+In this paper, we show that current computer vision techniques are successful in classifying a single surface defect on a knife. Additionally, we show that using these vision techniques in conjunction with real world data allows a simple greedy adaptive planner to outperform random view selection. While the results in this paper are promising, there are two main avenues for future work.
+
+First, there is room to explore more sophisticated planning methods. These include planning with a longer horizon as well as planning over a larger number of views. Since the current algorithm processes so quickly, planning with a longer horizon would allow for the algorithm to maximize the long term information gain. As new information from the vision system is received, the plan can be updated. Additionally, it would be interesting to see the effects of a larger set of possible view angles. Specifically, using views with rotations along multiple axes may provide interesting results.
+
+Second, the nature of the task begs the question of if the view planning algorithm can be improved by incorporating inspection data from human operators. The motivation behind this is that through experience, skilled human inspectors build a large knowledge base of how/where defects typically present. This allows them to inspect knives more effectively than a novice. We theorize that in most cases, human inspectors will follow a general view sequence that they have learned works well. When the inspector notices something that is a potential defect, they may adjust their inspection sequence to more closely inspect that area. This data can be incorporated into the adaptive planning algorithm by using it to help predict the information gains of the set of possible next views. That is, based on the results of the vision system and human inspection data, we may be able to boost (or reduce) the predicted information gain of certain views.
 
 \bibliographystyle{IEEEtran}
 \bibliography{main}
