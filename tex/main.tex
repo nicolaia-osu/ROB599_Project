@@ -323,13 +323,26 @@ Additional considerations such as reflection angle against light resources could
     \label{fig:prob_dists}
 \end{figure*}
 
-\begin{figure}
+\begin{figure*}
     \centering
-    \includegraphics[width=.49\textwidth]{info_gain_views.png}
-    \caption{Cumulative information gained}
-    \vspace*{2mm}
-    \label{fig:cumulative_info}
-\end{figure}
+    \begin{subfigure}[b]{.49\textwidth}
+        \centering
+        \includegraphics[width=.99\textwidth]{finite_views.png}
+        \caption{Entropy reduction by inspection time}
+        \vspace*{2mm}
+        \label{fig:info_by_time}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.49\textwidth}
+        \centering
+        {\includegraphics[width=.97\textwidth]{info_gain_views.png}}
+        \caption{Cumulative information by number of views}
+        \vspace*{2mm}
+        \label{fig:info_by_view}
+    \end{subfigure}
+    \caption{Comparison of greedy view selection vs. random view selection. Error bars \\ represent 1 standard deviation calculated over 1000 simulations.}
+    \label{fig:info gains}
+\end{figure*}
 
 \section{Results}
 
@@ -341,9 +354,17 @@ While additional parameter tuning in the vision algorithm may yield higher detec
 
 \subsection{Planning Algorithm}
 
+\textit{Figure \ref{fig:prob_dists}} illustrates an example (for a single random run) of how the defect probability regions over the knife change as views are taken. Note that the same number of views doesn't necessarily represent the same budget of time. Additionally note that in this case, for random selection, only 7 views were obtained in the 4 second budget while greedy selection obtained 8 views.
+
+\textit{Figure \ref{fig:info_by_time}} shows the entropy reduction over time. In this plot, each data point represents a view. The \textit{x} error bars represent the fact that different views require different amounts of time to reach. The \textit{y} error bars represent the variance in the entropy reduction. \textit{Figure \ref{fig:info_by_view}} shows the information gained as a function of view count. This is the inverse of the entropy reduction. Note that as the view count approached full coverage, the variance is reduced and the random selection average converges to the greedy selection value.
+
 \section{Discussion}
 
-\textit{Discussion text will go here}
+From \textit{Figures \ref{fig:prob_dists}} and \textit{\ref{fig:info gains}} it can be seen that the greedy selection algorithm outperforms random selection. In \textit{Figure \ref{fig:prob_dists}}, it can be seen that while both algorithms achieve a similar solution after 4 seconds, the greedy selection performs in a more efficient manner. The greedy selection identifies areas of interest first, and then refines its belief as more views are taken. Conversely, the random selection chooses random views and only converges to a final belief once many views have been obtained.
+
+\textit{Figure \ref{fig:info_by_time}} shows that for a given budget of 4 seconds, the greedy selection algorithm is able to achieve more views than the random selection algorithm. It is able to achieve 8 views, only missing the final view by about 100 milliseconds. The random selection is able to achieve a range of 6-8 views with an average of 7. From both \textit{Figures \ref{fig:info_by_time}} and \textit{\ref{fig:info_by_view}}, it can be seen that given enough time, the random algorithm is able to achieve all views. In this case, the final entropy value converges to the same value of the greedy solution. This convergence is evident in the fact that the \textit{y} error bars approach zero.
+
+From our results, we theorize that as the number of possible view states increases, random selection will perform increasingly poor. This is due to the fact that while greedy selection will likely still prioritize many views from all angles of the knife, random selection will have a high probability of selecting very similar views that do not provide much additional information. This performance discrepancy will become increasingly evident as the number of views approaches continuous space.
 
 \section{Conclusions and Future Work}
 
