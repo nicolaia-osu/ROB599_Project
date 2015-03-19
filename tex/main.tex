@@ -205,6 +205,47 @@ The next step is feature extraction for input into the SVM. The features used ar
 
 We propose to incorporate an informative path planning approach to maximize detection of potential knife defects. Informally, such a procedure will require training against a sufficiently large image database so that knife regions can be identified as showing potential for having a surface defect.
 
+\begin{align}
+    P(D_i)^{\theta_0} &= 0.5
+    \label{eq: initDist}
+    \\
+    % \begin{equation}
+    H(\theta) &= \sum_{i\in\mathcal{K}} H(P(D_i)^\theta)
+    \label{eq: totalKnifeEntropyDist}
+    \\
+    % \begin{equation}
+    P(\mathbf{e}|D_i) &\in \{0.2,0.8\}
+    \label{eq:iinitVisionAccuracy}\\   
+% \begin{equation}
+    P(D_i|\mathbf{e}) &= \frac{P(\mathbf{e}|D_i) P(D_i)}{P(\mathbf{e})}, \;\;i\in \mathcal{K} 
+    \label{eq: bayesianUpdate}
+    \\ 
+% \end{equation}
+% \end{equation}
+% \begin{equation}
+% \end{equation}
+% \begin{equation}
+    P(D_i)^{\theta_{t+1}} &= \beta_i^{\theta} P(D_i|\mathbf{e}) + (1 - \beta_i^{\theta}) P(D_i)^{t}
+    \label{eq: confidenceValueUpdate}
+    \\
+% \end{equation}
+% \begin{equation}
+    \beta_i^{\theta} &\in [0.3 - 0.85], \;\;i\in\mathcal{K},\;\theta\in\Theta^t
+    \label{eq: confidenceValueRange}
+    \\
+% \end{equation}
+% \begin{equation}
+    \text{MoveValue}(\theta_{t+1}) &= \frac{H(\theta_t) - H(\theta_{t+1})}{\text{MoveCost}(\theta_t,\theta_{t+1})}
+    \label{eq: entropyReduction}
+    \\
+% \end{equation}
+% \end{equation}
+% \begin{equation}
+    \theta_{t+1} &= \underset{\theta'\in\Theta^t}{\text{argmax}}\text{ MoveValue}(\theta')
+    \label{eq: maximization}
+% \end{equation}
+\end{align}
+
 Such a path planning problem seems trivial until placing strict timing constraints on the image capturing procedure or as we limit the number preset camera locations. Given a single fixed camera location, we assume a robot arm (e.g. a Motoman Education Cell) is available for grasping a single knife and rotating it to the appropriate angle for the camera to capture a specific view. Additionally, changes to the lighting configuration, or lighting type (e.g. near field, dark field), could be used to specify a different view configuration.
 
 Initially, we assign equal information to all locations along the knife surface. Naturally this leads to the first view capturing one full side of the knife edge. Subsequent views will be based on the information yielded during image analysis. Potential defect locations identified by the analysis will lead to an updated non-uniform information layout along the knife surface. High probability of defect detection on one location of the knife might lead to the next view being zoomed in near that knife region. If the image analysis does not lead to significant potential defect locations, the original information layout would likely cause the path planning algorithm to capture a full view of the information on the opposite knife edge.
