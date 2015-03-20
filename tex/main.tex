@@ -37,7 +37,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \title{\LARGE \bf 
-Active Planning for Defect Detection in the Knife Domain
+Active Planning for Cosmetic Defect Inspection
 }
 
 \author{Austin Nicolai, Kory Kraft, and Gabriel Hackebeil}
@@ -49,7 +49,7 @@ Active Planning for Defect Detection in the Knife Domain
 \pagestyle{empty}
 
 \begin{abstract}
-\textit{Abstract text will go here}
+\textit{Automated defect detection is a way to save resources without sacrificing quality control, assuming the process takes less time than manual vision inspection and achieves an acceptable level of accuracy. In this paper, we show that current computer vision techniques united with relevant adaptive view planning methods can successfully detect defects in consumer-grade knives, with no compromises in the quality of the detection nor time needed to make the decision.}
 \let\thefootnote\relax\footnote{\hrulefill
 \\\hspace*{1em} \hfill
 \\\hspace*{1em} Austin Nicolai and Kory Kraft
@@ -314,39 +314,60 @@ For this study we simulate a form of perspective correction and assign confidenc
         \vspace*{2mm}
         \label{fig:rand7view}
     \end{subfigure}
-    \caption{Probability of defect by knife region. Note that the greedy \\ selection achieves 8 views in the time budget while the random \\ selection only achieves 7 views in the same time frame.}
+    \caption{Probability of defect by knife region. Note that the greedy selection achieves \\ 8 views in the time budget while the random selection only achieves 7 views in the same \\ time frame. Value peaks represent higher probability of the presence of a defect in a given region.}
     \label{fig:prob_dists}
 \end{figure*}
 
-\begin{figure}
+\begin{figure*}
     \centering
-    \includegraphics[width=.49\textwidth]{info_gain_views.png}
-    \caption{Cumulative information gained}
-    \vspace*{2mm}
-    \label{fig:cumulative_info}
-\end{figure}
+    \begin{subfigure}[b]{.49\textwidth}
+        \centering
+        \includegraphics[width=.99\textwidth]{finite_views.png}
+        \caption{Total entropy by inspection time}
+        \vspace*{2mm}
+        \label{fig:info_by_time}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.49\textwidth}
+        \centering
+        {\includegraphics[width=.97\textwidth]{info_gain_views.png}}
+        \caption{Total information by number of views}
+        \vspace*{2mm}
+        \label{fig:info_by_view}
+    \end{subfigure}
+    \caption{Comparison of greedy view selection vs. random view selection. Error bars \\ represent 1 standard deviation calculated over 1000 simulations.}
+    \label{fig:info gains}
+\end{figure*}
 
 \section{Results}
 
 \subsection{Computer Vision Algorithm}
 
-Initial testing of the proposed vision algorithm shows good results. Initial results show that for training, validation, and test data sets, the defect detection rate is greater than 80\%. It is important to note that while promising, these results were generated from a limited data set in terms of knife and defect examples. Increasing the number of examples, both positive and negative, in the data set will yield a more robust classifier.
-
-While additional parameter tuning in the vision algorithm may yield higher detection rate, there are other avenues to explore. These avenues include the use of alternative lighting sources (e.g. near field, dark field), as previously mentioned. The use of these lighting sources may help to increase the visibility of defects, and thus make them easier to classify. This, in turn, will lead to a higher defect detection rate for the classifier.
+Testing of the proposed vision algorithm shows good results. Results show that for training, validation, and test data sets, the defect detection rate is greater than 80\%. It is important to note that while promising, these results were generated from a limited data set in terms of knife and defect examples. Increasing the number of examples, both positive and negative, in the data set will yield a more robust classifier.
 
 \subsection{Planning Algorithm}
 
+\textit{Figure \ref{fig:prob_dists}} illustrates an example (for a single random run) of how the defect probability regions over the knife change as views are taken. Note that the same number of views doesn't necessarily represent the same budget of time. Additionally note that in this case, for random selection, only 7 views were obtained in the 4 second budget while greedy selection obtained 8 views.
+
+\textit{Figure \ref{fig:info_by_time}} shows the entropy reduction over time. In this plot, each data point represents a view. The \textit{x-axis} error bars represent the fact that different views require different amounts of time to reach. The \textit{y-axis} error bars represent the variance in the entropy reduction. \textit{Figure \ref{fig:info_by_view}} shows the information gained as a function of view count. This is the inverse of the entropy reduction. Note that as the view count approached full coverage, the variance is reduced and the random selection average converges to the greedy selection value.
+
 \section{Discussion}
 
-\textit{Discussion text will go here}
+From \textit{Figures \ref{fig:prob_dists}} and \textit{\ref{fig:info gains}} it can be seen that the greedy selection algorithm outperforms random selection. Note that in \textit{Figure \ref{fig:prob_dists}}, it can be seen that while both algorithms achieve a similar solution after 4 seconds, the greedy selection performs in a more efficient manner. The greedy selection identifies areas of interest first, and then refines its belief as more views are taken. Conversely, the random selection chooses random views and only converges to a final belief once many views have been obtained.
+
+\textit{Figure \ref{fig:info_by_time}} shows that for a given budget of 4 seconds, the greedy selection algorithm is able to achieve more views than the random selection algorithm. It is able to achieve 8 views, only missing the final view by roughly 100 milliseconds. The random selection is able to achieve a range of 6-8 views with an average of 7. From both \textit{Figures \ref{fig:info_by_time}} and \textit{\ref{fig:info_by_view}}, it can be seen that given enough time, the random algorithm is able to achieve all views. In this case, the final entropy value converges to the same value of the greedy solution. This convergence is evident in the fact that the \textit{y-axis} error bars approach zero.
+
+From our results, we theorize that as the number of possible view states increases, the performance of random selection will continue to degrade. This is due to the fact that while greedy selection will likely still prioritize many views from all angles of the knife, random selection will have a high probability of selecting very similar views that do not provide much additional information. This performance discrepancy will become increasingly evident as the number of views approaches continuous space.
 
 \section{Conclusions and Future Work}
 
-In this paper, we show that current computer vision techniques are successful in classifying a single surface defect on a knife. Additionally, we show that using these vision techniques in conjunction with real world data allows a simple greedy adaptive planner to outperform random view selection. While the results in this paper are promising, there are two main avenues for future work.
+In this paper, we show that current computer vision techniques are successful in classifying a single surface defect on a knife. Additionally, we show that using these vision techniques in conjunction with real world data allows a simple greedy adaptive planner to outperform random view selection. While the results in this paper are promising, there are several avenues for future work.
 
-First, there is room to explore more sophisticated planning methods. These include planning with a longer horizon as well as planning over a larger number of views. Since the current algorithm processes so quickly, planning with a longer horizon would allow for the algorithm to maximize the long term information gain. As new information from the vision system is received, the plan can be updated. Additionally, it would be interesting to see the effects of a larger set of possible view angles. Specifically, using views with rotations along multiple axes may provide interesting results.
+First, while additional parameter tuning in the vision algorithm may yield higher detection rate, there are other avenues to explore. These avenues include the use of alternative lighting sources (e.g. near field, dark field), as previously mentioned. The use of these lighting sources may help to increase the visibility of defects, and thus make them easier to classify. This, in turn, will lead to a higher defect detection rate for the classifier.
 
-Second, the nature of the task begs the question of if the view planning algorithm can be improved by incorporating inspection data from human operators. The motivation behind this is that through experience, skilled human inspectors build a large knowledge base of how/where defects typically present. This allows them to inspect knives more effectively than a novice. We theorize that in most cases, human inspectors will follow a general view sequence that they have learned works well. When the inspector notices something that is a potential defect, they may adjust their inspection sequence to more closely inspect that area. This data can be incorporated into the adaptive planning algorithm by using it to help predict the information gains of the set of possible next views. That is, based on the results of the vision system and human inspection data, we may be able to boost (or reduce) the predicted information gain of certain views.
+Next, there is room to explore more sophisticated planning methods. These include planning with a longer horizon as well as planning over a larger number of views. Since the current algorithm processes so quickly, planning with a longer horizon would allow for the algorithm to maximize the long term information gain. As new information from the vision system is received, the plan can be updated. Additionally, it would be interesting to see the effects of a larger set of possible view angles. Specifically, using views with rotations along multiple axes may provide interesting results.
+
+Last, the nature of the task begs the question of if the view planning algorithm can be improved by incorporating inspection data from human operators. The motivation behind this is that through experience, skilled human inspectors build a large knowledge base of how/where defects typically present. This allows them to inspect knives more effectively than a novice. We theorize that in most cases, human inspectors will follow a general view sequence that they have learned works well. When the inspector notices something that is a potential defect, they may adjust their inspection sequence to more closely inspect that area. This data can be incorporated into the adaptive planning algorithm by using it to help predict the information gains of the set of possible next views. That is, based on the results of the vision system and human inspection data, we may be able to boost (or reduce) the predicted information gain of certain views.
 
 \bibliographystyle{IEEEtran}
 \bibliography{main}
