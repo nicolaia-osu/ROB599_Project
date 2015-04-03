@@ -86,7 +86,7 @@ Defect detection is key to ensure both quality and safety. The process of manual
 
 Attempts and successes have been made in automating defect detection, but each defect detection process can be highly dependent upon the good manufactured \cite{automatedVisionInspection}\cite{defectGabor}\cite{defectSewer}.
 
-We have decided to focus on defects created during knife manufacturing. One example of this process involves quality control workers visually inspecting batches of knives for a wide variety of defects. Characterization of a defect varies between knife type, defect type, and defect severity. On average, a worker may spend four seconds (two per side) inspecting each knife and typically achieves an accuracy upper-bounded by 80\%.
+We have decided to focus on defects created during knife manufacturing. One example of this process involves quality control workers visually inspecting batches of knives for a wide variety of defects. Characterization of a defect varies between knife type, defect type, and defect severity. On average, a worker may spend 4 seconds (2 per side) inspecting each knife and typically achieves an accuracy upper-bounded by 80\%.
 
 Our setup is built around this example. We show that active classification for defects in knives is possible using a modern vision sytem united with an adaptive planning algorithm.
 
@@ -179,7 +179,7 @@ The next step is feature extraction for input into the SVM. The features used ar
 \begin{figure*}
     \centering
     \includegraphics[width=.75\textwidth]{computer_vision_diagram.png}
-    \caption{Computer vision algorithm flowchart. Adapted from \cite{railDefect}}
+    \caption{Computer vision algorithm flowchart. Adapted from \cite{railDefect}.}
     \vspace*{2mm}
     \label{fig:vision algorithm diagram}
 \end{figure*}
@@ -207,9 +207,9 @@ The next step is feature extraction for input into the SVM. The features used ar
 
 \subsection{Adaptive Planning}
 
-Given the output of the vision system, we actively classify the knife as containing a defect or not by using a greedy horizon planner to reduce the entropy of the belief of all the regions of the knife. We simulate the robotic manipulation of the knife by characterizing each view angle as a state. The planner then decides, given a current state, which state to view next based on what has been seen up to the given point. A movement cost is incurred from one view state to another using the angular Manhattan distance as a metric. This assumes that the camera is situated perpendicular to the knife in the x and y axes initially. Additionally, a simulated \textit{camera view time} is added to the movement cost. This view time simulates the time requires to take and process a single image.
+Given the output of the vision system, we actively classify the knife as containing a defect or not by using a greedy horizon planner to reduce the entropy of the belief of all the regions of the knife. We simulate the robotic manipulation of the knife by characterizing each view angle as a state. The planner then decides, given a current state, which state to view next based on what has been seen up to the given point. A movement cost is incurred from one view state to another using the angular Manhattan distance as a metric. This assumes that the camera is situated perpendicular to the knife in the \textit{x} and \textit{y} axes initially. Additionally, a simulated \textit{camera view time} is added to the movement cost. This simulates the time requires to take and process a single image.
 
-We start with an initial belief that the knife has a defect in each region at 50\% and set our confidence in the observed measurement to the accuracy of the vision system.
+We start with an initial belief that the knife has a defect in each region at 50\% and set our confidence in the observed measurement to the experimental accuracy of the vision system.
 
 \begin{equation*}
     P(D_i)^{\theta_0} = 0.5 \label{eq: initDist}
@@ -232,7 +232,7 @@ After selecting a view (whether randomly or using the greedy horizon planner), a
     P(D_i|\mathbf{e}) = \frac{P(\mathbf{e}|D_i) P(D_i)}{P(\mathbf{e})}, \;\;i\in \mathcal{K}  \label{eq: bayesianUpdate}
 \end{equation}
 
-The value in selecting the next view is captured by using a Bayesian update. Historical data can be used to predict in which knife regions defects can be reliably seen, thereby effecting the value of $P(\mathbf{e}|D_i)$. Additionally, different view angles better highlight defects in different knife regions. This is modeled as a confidence value representing how likely a specific view will accurately identify a defect in a given knife region. This allows us to perform our Bayesian update along a linear scale, based upon our confidence value, as given below.
+The value in selecting the next view is captured by using a Bayesian update. Historical data can be used to predict in which knife regions defects can be reliably seen. Additionally, different view angles better highlight defects in different knife regions. This is modeled as a confidence value representing how likely a specific view will accurately identify a defect in a given knife region. This allows us to perform our Bayesian update along a linear scale, based upon our confidence value, as given below.
 
 \begin{equation}
     P(D_i)^{\theta_{t+1}} = \beta_i^{\theta} P(D_i|\mathbf{e}) + (1 - \beta_i^{\theta}) P(D_i)^{t} \label{confidenceValueUpdate}
