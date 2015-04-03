@@ -102,7 +102,7 @@ Image classification is done using common machine learning techniques for classi
 
 Unsupervised learning with image classification requires an expert to label a set of images beforehand. The labeled images are then used to instruct or train the classifier. While more tedious, given a large enough training set, these algorithms can be very efficient and effective.
 
-For example, a real-time vision system for surface defect detection in steel manufacturing was successfully implemented by Jia, et al using standard supervised learning algorithms and a clever feature extraction scheme \cite{steelDefect}. The authors used a rough filter to detect possible edges in the steel and then features are extracted from that according to their pixel length, the gray scale constract of seam to adjacent area, the intensity differences between the two sides of the seams, and the mean and variance of the seam regions. Using these features, the images were then classified using two standard classification algorithms: K-Nearest Neighbors (KNN) and a Support Vector Machine (SVM). The authors were able to classify the images with greater than 90 percent accuracy at a rate of 172 images per second, fast enough to detect defects in real-time for a steel rolling machine that could reach speeds of 225 MPH.
+For example, a real-time vision system for surface defect detection in steel manufacturing was successfully implemented by Jia et al. using standard supervised learning algorithms and a clever feature extraction scheme \cite{steelDefect}. The authors used a rough filter to detect possible edges in the steel and then features are extracted from that according to their pixel length, the gray scale constract of seam to adjacent area, the intensity differences between the two sides of the seams, and the mean and variance of the seam regions. Using these features, the images were then classified using two standard classification algorithms: K-Nearest Neighbors (KNN) and a Support Vector Machine (SVM). The authors were able to classify the images with greater than 90 percent accuracy at a rate of 172 images per second, fast enough to detect defects in real-time for a steel rolling machine that could reach speeds of 225 MPH.
 
 A wavelet filter, Gabor filter, and Gabor wavlet filter were successfully used to classify corrugation defects on rail tracks\cite{railDefect}. In particular, the authors found the Gabor filter to be most successful. The image was first convolved with the Gabor filter at four different orientations. Each of these images were then evaluated with an energy distribution function yielding the mean and variance.  The mean and variance from each filter orientation were assembled to create a feature vector of size 8 for the original image. This is the filter we will be adapting for our approach.
 
@@ -120,9 +120,13 @@ Due to this close mapping and the success of similar methods in other domains, w
 
 \section{Methods}
 
-In practice, solving the problem of knife defect detection requires an end-to-end system comprised of a vision system, a knife manipulation system, and an accurate classification system. We focused on implementing a robust vision system and accurate classification system while simulating the knife manipulation system. We use the 4 seconds average as mentioned earlier (S II A) as the time limit that each knife may use before a final assessment as to whether or not it contains a defect.
+In practice, solving the problem of knife defect detection requires an end-to-end system comprised of a vision system, a knife manipulation system, and an accurate classification system. We focused on implementing a robust vision system and accurate classification system while simulating the knife manipulation system.
 
-In particular, we examine a knife with a ding??
+For this study the goal is to minimize entropy, making our belief of defect locations as strong as possible. We begin by discretizing the continuous view space into 9 discrete views along either the \textit{x} or \textit{y} rotation axis. Additonally, we discretize the knife into probability regions representing our belief of if a defect is present.
+
+Using historical data to predict the locations of defects, a simple 1-step greedy lookahead algorithm predicts which view state will provide the largest gain in entropy vs. transition time. That is, it is better to take a quicker, less valuable observation that a trivially more valuable observation that is farther away on the knife. Transition time is modeled as the cost to move to a new state and take an observation. Once a view is selected, the move is performed and an actual observation is taken. Our belief state is then updated via a Bayesian update.
+
+In order to test our algorithm, we compare against random view selection. For both algorithms, we select views until all 9 discrete views have been chosen, without repetition. For random, 1000 statistical runs are performed.
 
 \subsection{Data Generation}
 
@@ -168,14 +172,14 @@ Next, a sliding window technique was used to generate additional training data f
 
 The computer vision algorithm employed in this paper was first proposed for use in defect detection in railroad tracks \cite{railDefect}. The algorithm uses Gabor filters and an energy distribution function to extract features from an input image. The classification is performed by an SVM classifier. A flowchart of the algorithm can be seen in \textit{Figure \ref{fig:vision algorithm diagram}}.
 
-First, the input image is fed through a filter bank consisting of Gabor filters. Four wavelet orientations are used: \textit{0\degree}, \textit{45\degree}, \textit{90\degree}, and \textit{135\degree}. Each orientation is replicated for three different filter sizes. This yields a total of twelve filters. Next, the magnitude operator is applied to the filtered images. 
+First, the input image is fed through a filter bank consisting of Gabor filters. Four wavelet orientations are used: \textit{0\degree}, \textit{45\degree}, \textit{90\degree}, and \textit{135\degree}. Each orientation is replicated for three different filter sizes. This yields a total of twelve filters. Next, the magnitude operator is applied to the filtered images. An example of the Gabor filter process can be seen in \textit{Figure \ref{fig:gabor filter bank}}.
 
-The next step is feature extraction for input into the SVM. The features used are the mean and variance of each filtered image. This allows for an image of high resolution to be collapsed down into a manageable feature set. The final resulting feature vector consists of all means and variances. For our algorithm, the feature vector is of length 24. An example of the entire process can be seen in \textit{Figure \ref{fig:gabor filter bank}}.
+The next step is feature extraction for input into the SVM. The features used are the mean and variance of each filtered image. This allows for an image of high resolution to be collapsed down into a manageable feature set. The final resulting feature vector consists of all means and variances. For our algorithm, the feature vector is of length 24.
 
 \begin{figure*}
     \centering
     \includegraphics[width=.75\textwidth]{computer_vision_diagram.png}
-    \caption{Computer vision algorithm flowchart}
+    \caption{Computer vision algorithm flowchart. Adapted from \cite{railDefect}}
     \vspace*{2mm}
     \label{fig:vision algorithm diagram}
 \end{figure*}
@@ -203,24 +207,21 @@ The next step is feature extraction for input into the SVM. The features used ar
 
 \subsection{Adaptive Planning}
 
-Given the output of the vision system, we actively classify the knife as containing a defect or not by using a greedy horizon planner to reduce the entropy of the belief of all the regions of the knife. We simulate the robotic manipulation of the knife by characterizing each view angle as a state. The planner then decides, given a current state, which state to view next based on what has been seen up to the given point. A movement cost is incurred from one view state to another using the angular Manhattan distance as a metric. This assumes that the camera is situated perpendicular to the knife in the x and y axes initially. Additionally, a simulated "camera view time" is added to the movement cost. This view time simulates the time requires to take and process a single image.
+Given the output of the vision system, we actively classify the knife as containing a defect or not by using a greedy horizon planner to reduce the entropy of the belief of all the regions of the knife. We simulate the robotic manipulation of the knife by characterizing each view angle as a state. The planner then decides, given a current state, which state to view next based on what has been seen up to the given point. A movement cost is incurred from one view state to another using the angular Manhattan distance as a metric. This assumes that the camera is situated perpendicular to the knife in the x and y axes initially. Additionally, a simulated \textit{camera view time} is added to the movement cost. This view time simulates the time requires to take and process a single image.
 
-We start with an initial belief that the knife has a defect in each region at 50\%.
+We start with an initial belief that the knife has a defect in each region at 50\% and set our confidence in the observed measurement to the accuracy of the vision system.
 
 \begin{equation*}
     P(D_i)^{\theta_0} = 0.5 \label{eq: initDist}
 \end{equation*}
 
-Based on the experimental runs, we characterize the vision system as 80\% accurate.
-
 \begin{equation*}
     P(\mathbf{e}|D_i) \in \{0.2,0.8\} \label{eq:initVisionAccuracy}
 \end{equation*}
 
-To make an accurate classification of the knife, the total entropy for all knife regions is minimized. This, in turn, increases the confidence about our belief for a given knife region. The total entropy of the knife is formulated in terms of individual knife regions as:
+To make an accurate classification of the knife, the total entropy for all knife regions is minimized. This, in turn, increases the confidence about our belief for a given knife region. The total entropy of the knife is formulated in terms of discretized knife regions as:
 
 \begin{equation}
-    % \begin{equation}
     H(\theta) = \sum_{i\in\mathcal{K}} H(P(D_i)^\theta) \label{eq: totalKnifeEntropyDist}
 \end{equation}
 
@@ -231,23 +232,26 @@ After selecting a view (whether randomly or using the greedy horizon planner), a
     P(D_i|\mathbf{e}) = \frac{P(\mathbf{e}|D_i) P(D_i)}{P(\mathbf{e})}, \;\;i\in \mathcal{K}  \label{eq: bayesianUpdate}
 \end{equation}
 
-The value in selecting the next view is captured by the Bayesian update. When available, historical data can be used to predict in which knife regions defects can be reliably seen, thereby effecting the value of $P(\mathbf{e}|D_i)$. In the absence of such data, one might consider placing a level of confidence on the performance of the image classification system over a knife region given a certain view angle. Such an update might take the form of Equation \eqref{confidenceValueUpdate} below.
+The value in selecting the next view is captured by using a Bayesian update. Historical data can be used to predict in which knife regions defects can be reliably seen, thereby effecting the value of $P(\mathbf{e}|D_i)$. Additionally, different view angles better highlight defects in different knife regions. This is modeled as a confidence value representing how likely a specific view will accurately identify a defect in a given knife region. This allows us to perform our Bayesian update along a linear scale, based upon our confidence value, as given below.
 
 \begin{equation}
     P(D_i)^{\theta_{t+1}} = \beta_i^{\theta} P(D_i|\mathbf{e}) + (1 - \beta_i^{\theta}) P(D_i)^{t} \label{confidenceValueUpdate}
 \end{equation}
+\\
 
-For this study we simulate a form of perspective correction and assign confidences $\beta_i^{\theta} \in [0.3 - 0.85], \;\;i\in\mathcal{K},\;\theta\in\Theta^t$, where larger confidence values are assigned based on what can feasibly and reliably be seen from a given view angle. Given these predictions to how a new view angle will update the knife region probabilities, we assign a value to moving to the next view as
+For this study we assign confidences $\beta_i^{\theta} \in [0.3 - 0.85], \;\;i\in\mathcal{K},\;\theta\in\Theta^t$, where larger confidence values represent a good view for a given region. Given these predictions to how a new view angle will update the knife region probabilities, we assign a value of moving to the next view as
 
 \begin{equation}
     \text{MoveValue}(\theta_{t+1}) = \frac{H(\theta_t) - H(\theta_{t+1})}{\text{MoveCost}(\theta_t,\theta_{t+1})}. \label{entropyReduction}
 \end{equation}
+\\
 
  This equation balances the predicted information gained from the considered next view with the budget cost of moving to this view. Thus for the single lookahead greedy search, the next view is chosen by maximizing Equation \eqref{entropyReduction}.
 
 \begin{equation}
     \theta_{t+1} = \underset{\theta'\in\Theta^t}{\text{argmax}}\text{ MoveValue}(\theta')
 \end{equation}
+\\
 
 \begin{figure*}
     \centering
@@ -343,7 +347,7 @@ For this study we simulate a form of perspective correction and assign confidenc
 
 \subsection{Computer Vision Algorithm}
 
-Testing of the proposed vision algorithm shows good results. Results show that for training, validation, and test data sets, the defect detection rate is greater than 80\%. It is important to note that while promising, these results were generated from a limited data set in terms of knife and defect examples. Increasing the number of examples, both positive and negative, in the data set will yield a more robust classifier.
+Testing of the proposed vision algorithm shows good results. Results show that for training, validation, and test data sets, the defect detection rate is roughly 80\%. It is important to note that while promising, these results were generated from a limited data set in terms of knife and defect examples. Increasing the number of examples, both positive and negative, in the data set will yield a more robust classifier.
 
 \subsection{Planning Algorithm}
 
@@ -363,9 +367,9 @@ From our results, we theorize that as the number of possible view states increas
 
 In this paper, we show that current computer vision techniques are successful in classifying a single surface defect on a knife. Additionally, we show that using these vision techniques in conjunction with real world data allows a simple greedy adaptive planner to outperform random view selection. While the results in this paper are promising, there are several avenues for future work.
 
-First, while additional parameter tuning in the vision algorithm may yield higher detection rate, there are other avenues to explore. These avenues include the use of alternative lighting sources (e.g. near field, dark field), as previously mentioned. The use of these lighting sources may help to increase the visibility of defects, and thus make them easier to classify. This, in turn, will lead to a higher defect detection rate for the classifier.
+First, while additional parameter tuning in the vision algorithm may yield higher detection rate, there are other avenues to explore. These avenues include the use of alternative lighting sources (e.g. near field, dark field). The use of these lighting sources may help to increase the visibility of defects, and thus make them easier to classify. This, in turn, will lead to a higher defect detection rate for the classifier.
 
-Next, there is room to explore more sophisticated planning methods. These include planning with a longer horizon as well as planning over a larger number of views. Since the current algorithm processes so quickly, planning with a longer horizon would allow for the algorithm to maximize the long term information gain. As new information from the vision system is received, the plan can be updated. Additionally, it would be interesting to see the effects of a larger set of possible view angles. Specifically, using views with rotations along multiple axes may provide interesting results.
+Next, there is room to explore more sophisticated planning methods. These include planning with a longer horizon as well as planning over a larger number of views. Planning with a longer horizon would allow for the algorithm to maximize the long term information gain. As new information from the vision system is received, the plan can be updated. Additionally, it would be interesting to see the effects of a larger set of possible view angles. Specifically, using views with rotations along multiple axes may provide interesting results.
 
 Last, the nature of the task begs the question of if the view planning algorithm can be improved by incorporating inspection data from human operators. The motivation behind this is that through experience, skilled human inspectors build a large knowledge base of how/where defects typically present. This allows them to inspect knives more effectively than a novice. We theorize that in most cases, human inspectors will follow a general view sequence that they have learned works well. When the inspector notices something that is a potential defect, they may adjust their inspection sequence to more closely inspect that area. This data can be incorporated into the adaptive planning algorithm by using it to help predict the information gains of the set of possible next views. That is, based on the results of the vision system and human inspection data, we may be able to boost (or reduce) the predicted information gain of certain views.
 
